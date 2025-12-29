@@ -46,8 +46,16 @@ class Player {
     this.#ballManager = ballManager;
   }
 
+  get ballManager(){
+    return this.#ballManager;
+  }
+
   get bat(){
     return this.#bat;
+  }
+
+  get playField(){
+    return this.#playField;
   }
 
   subscribe({callback}){
@@ -67,6 +75,7 @@ class Player {
 
     this.#playField = this.#playFieldFactory.createPlayField({});
     this.#playField.init();
+    console.log("playField: ", this.#playField);
 
     this.#bat = new Bat({
       playFieldBounds: this.#playField.bounds,
@@ -79,6 +88,11 @@ class Player {
     this.#bat.init();
 
   }
+
+  update(){
+
+  }
+
   draw(){
     this.#playField.draw();
     this.#bat.update();

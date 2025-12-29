@@ -17,11 +17,11 @@ class BallController {
     this.#gameMode = gameMode;
     this.#game = game;
     this.#players = players;
+
   };
 
 
   init(){
-
     this.#ballFactory = new BallFactory({
       stageProperties: this.#stageProperties
     });
@@ -29,10 +29,13 @@ class BallController {
     this.#ballFactory.init();
 
     this.#players.forEach(player => {
+      console.log("player", player);
       player.ballManager = new BallManager({
         stageProperties: this.#stageProperties,
         ballFactory: this.#ballFactory,
         bat: player.bat,
+        playField: player.playField,
+        playerId: player.playerId,
         onEffect: (e) => this.handleEffect(e),
         onScore:(e) => this.handleScoreUpdate(e)
       })
@@ -48,15 +51,18 @@ class BallController {
   }
 
   handleScoreUpdate({playerId, points}){
+    // @TODO: Update score in game score manager
+    /*
     this.#game.score.updateScore({
       playerId: playerId,
       points: points
     })
-
+*/
   }
 
   createBalls(){
     const randomBallTypeNumber = Math.floor(random(1,100));
+    console.log(randomBallTypeNumber);
     this.#players.forEach(player => {
       player.ballManager.createBall({
         randomBallTypeNumber: randomBallTypeNumber

@@ -2,10 +2,10 @@ class BattSpeedUpBall extends Ball {
 
   #time;
   
-  constructor({stageProperties}){
+  constructor({stageProperties, playField}){
     super({
-    
       stageProperties: stageProperties,
+      playField: playField,
       weight: 40,
       color: [0,0,255]
     })

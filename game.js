@@ -99,7 +99,11 @@ class Game {
   #drawRunning(){
     background(100);
     this.#players.forEach(player=>{
+      player.update();
       player.draw();
+      player.ballManager.updateBalls();
+      player.ballManager.drawBalls();
+
     })
 
     /*
@@ -137,9 +141,10 @@ class Game {
   applyEffect({
                 playerId,
                 effect}){
+    /*
     switch (effect.target) {
       case "BATT": {this.#bat.applyEffect(effect); break}
-    }
+    }*/
   }
   
   updateScore(points){
@@ -153,7 +158,7 @@ class Game {
   startMatch(){
     console.log("startMatch");
     this.#timer.start();
-    //this.#ballManager.startCreatingBalls();
+    this.#ballController.start();
     this.#matchState = "running";
   }
   

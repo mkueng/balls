@@ -36,32 +36,38 @@ class BallFactory {
     }
     
     this.#ballTypes = {
-      plain: ()=> new Ball({
-        stageProperties: this.#stageProperties
+      plain: (playField)=> new Ball({
+        stageProperties: this.#stageProperties,
+        playField: playField
       }),
       
-      number: ()=> new NumberBall({
-        stageProperties: this.#stageProperties
+      number: (playField)=> new NumberBall({
+        stageProperties: this.#stageProperties,
+        playField: playField
       }),
       
-      extender: ()=> new ExtenderBall({
-        stageProperties: this.#stageProperties
+      extender: (playField)=> new ExtenderBall({
+        stageProperties: this.#stageProperties,
+        playField: playField
       }),
       
-      rainbow: ()=> new RainbowBall({
-        stageProperties: this.#stageProperties
+      rainbow: (playField)=> new RainbowBall({
+        stageProperties: this.#stageProperties,
+        playField: playField
       }),
       
-      speed: ()=> new BattSpeedUpBall({
-        stageProperties: this.#stageProperties
+      speed: (playField)=> new BattSpeedUpBall({
+        stageProperties: this.#stageProperties,
+        playField: playField
       }),
-      curve: ()=> new CurveBall({
-         stageProperties: this.#stageProperties
+      curve: (playField)=> new CurveBall({
+        stageProperties: this.#stageProperties,
+        playField: playField
       })
     }
   }
   
-  createBall(type){
-    return this.#ballTypes[type]();
+  createBall({type,playField}){
+    return this.#ballTypes[type](playField);
   }
 }

@@ -3,12 +3,12 @@ class BallManager {
   #stageProperties;
   #ballFactory;
   #balls;
-  #playFieldWidth;
-  #playFieldHeight;
   #bat;
   #onScore;
   #onEffect;
   #playerId;
+  #playField;
+
   
   constructor({
     stageProperties,
@@ -16,7 +16,8 @@ class BallManager {
     bat,
     onScore,
     onEffect,
-    playerId
+    playerId,
+    playField
   }){
 
     this.#bat = bat;
@@ -24,34 +25,33 @@ class BallManager {
     this.#playerId = playerId;
     this.#onEffect = onEffect;
     this.#stageProperties = stageProperties;
-    this.#playFieldWidth = stageProperties.playFieldWidth;
-    this.#playFieldHeight = stageProperties.playFieldHeight;
     this.#ballFactory = ballFactory;
     this.#balls = [];
+    this.#playField = playField;
+    console.log("playField: ", this.#playField);
   }
 
   init(){
 
   }
 
-
-
-
   /**
    * @param randomBallTypeNumber
    */
   createBall({
+
+
     randomBallTypeNumber
              }){
-
+    console.log("createBall called with type: ");
     const ballType = this.#ballFactory.ballTypeMap[""+randomBallTypeNumber];
-    this.#balls.push(this.#ballFactory.createBall(ballType));
+    this.#balls.push(this.#ballFactory.createBall({type:ballType, playField: this.#playField}));
   }
 
 
   updateBalls() {
-    const playFieldWidth  = this.#playFieldWidth;
-    const playFieldHeight = this.#playFieldHeight;
+    const playFieldWidth  = this.#playField.bounds.width;
+    const playFieldHeight = this.#playField.bounds.height;
 
     for (let i = this.#balls.length - 1; i >= 0; i--) {
       const ball = this.#balls[i];
@@ -86,7 +86,7 @@ class BallManager {
           });
   
           const hitAreaRounded = Math.floor(hitArea);
-          const offset = hitAreaRounded - (battWidth / 2 +1);
+          const offset = hitAreaRounded - (this.#bat.width / 2 +1);
   
           // combine your two lines:
           ball.velX = (ball.velX + offset) / 18;

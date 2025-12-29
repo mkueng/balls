@@ -2,10 +2,11 @@ class ExtenderBall extends Ball {
 
   #time;
   
-  constructor({stageProperties}){
+  constructor({stageProperties, playField}){
     super({
     
       stageProperties: stageProperties,
+      playField: playField,
       weight: 30,
       color: [255,0,0]
     })

@@ -3,9 +3,10 @@ class CurveBall extends Ball {
   
   #time;
   
-  constructor({stageProperties}) {
+  constructor({stageProperties, playField}) {
     super({
       stageProperties,
+      playField,
       weight:  Math.floor(random(45,60))
     });
     this.#time = 0;

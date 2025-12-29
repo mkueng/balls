@@ -12,6 +12,7 @@ class Ball{
   #direction;
   #isActive;
   #stageProperties;
+  #playField;
   #numberOfBounces;
   #scorePoints;
   
@@ -20,6 +21,7 @@ class Ball{
     type,
     image,
     stageProperties,
+    playField,
     weight,
     posX,
     posY,
@@ -30,6 +32,7 @@ class Ball{
   
   }){
     this.#stageProperties = stageProperties;
+    this.#playField = playField;
     this.#direction = true;
     this.#isActive = true;
     this.#time = time;
@@ -41,10 +44,11 @@ class Ball{
 
     this.#posX =
       posX ?? random(
-        this.#weight,
-        this.#stageProperties.playFieldWidth - this.#weight
+        this.#playField.bounds.startX,
+        this.#playField.bounds.startX+this.#playField.bounds.width - this.#weight
       );
 
+    console.log("posX ball: ", this.#posX);
     this.#posY =
       posY ?? -this.#weight;
 

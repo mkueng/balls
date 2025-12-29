@@ -2,8 +2,11 @@ class NumberBall extends Ball {
 
   #numberOfBounces;
   
-  constructor({stageProperties}){
-    super({stageProperties})
+  constructor({stageProperties, playField}){
+    super({
+      stageProperties,
+      playField
+    })
     this.#numberOfBounces = 0;
   }
   
