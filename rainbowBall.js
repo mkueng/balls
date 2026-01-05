@@ -1,9 +1,11 @@
 class RainbowBall extends Ball {
   
-  constructor({stageProperties}){
+  constructor({stageProperties, playField, relativePosXPercentage}){
     super({
     
       stageProperties: stageProperties,
+      playField: playField,
+      relativePosXPercentage,
       weight: 30
     })
   }
@@ -16,11 +18,11 @@ class RainbowBall extends Ball {
     };
   }
   
-  update(){
+  update({speedFactor}) {
     super.update();
   }
   
-  draw(){  
+  draw({speedFactor}){
     noStroke();
     fill(Math.floor(random(255)),Math.floor(random(255)),Math.floor(random(255)));
     circle(this.posX,this.posY,this.weight);

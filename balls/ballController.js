@@ -5,37 +5,43 @@ class BallController {
   #players;
   #game;
   #intervalId;
-  #ballFactory
+  #ballFactory;
+  #scale;
 
   constructor({
     stageProperties,
     gameMode,
     players,
-    game
+    game,
+    scale
   }){
     this.#stageProperties = stageProperties;
     this.#gameMode = gameMode;
     this.#game = game;
     this.#players = players;
-
+    this.#scale = scale;
   };
 
+  set scale(scale) {
+    this.#scale = scale;
+    this.#players.forEach(player => {
+      player.ballManager.scale = scale;
+    })
+  }
 
   init(){
     this.#ballFactory = new BallFactory({
       stageProperties: this.#stageProperties
     });
 
-    this.#ballFactory.init();
-
     this.#players.forEach(player => {
-      console.log("player", player);
       player.ballManager = new BallManager({
         stageProperties: this.#stageProperties,
         ballFactory: this.#ballFactory,
         bat: player.bat,
         playField: player.playField,
         playerId: player.playerId,
+        scale: this.#scale,
         onEffect: (e) => this.handleEffect(e),
         onScore:(e) => this.handleScoreUpdate(e)
       })
@@ -62,10 +68,17 @@ class BallController {
 
   createBalls(){
     const randomBallTypeNumber = Math.floor(random(1,100));
-    console.log(randomBallTypeNumber);
+    //const randomBallWeight = Math.floor(random(25,60));
+    const ballWeight =  50;
+    //const relativePosXPercentage = Math.floor(random(10,90));
+    const relativePosXPercentage = 50;
     this.#players.forEach(player => {
       player.ballManager.createBall({
-        randomBallTypeNumber: randomBallTypeNumber
+        randomBallTypeNumber: randomBallTypeNumber,
+        ballWeight: ballWeight,
+        relativePosXPercentage: relativePosXPercentage,
+        scale: this.#scale
+
       })
     })
   }

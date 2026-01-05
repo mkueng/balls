@@ -8,8 +8,8 @@ class BallManager {
   #onEffect;
   #playerId;
   #playField;
+  #scale;
 
-  
   constructor({
     stageProperties,
     ballFactory,
@@ -17,7 +17,8 @@ class BallManager {
     onScore,
     onEffect,
     playerId,
-    playField
+    playField,
+    scale
   }){
 
     this.#bat = bat;
@@ -28,26 +29,38 @@ class BallManager {
     this.#ballFactory = ballFactory;
     this.#balls = [];
     this.#playField = playField;
-    console.log("playField: ", this.#playField);
+    this.#scale = scale;
   }
 
-  init(){
-
+  set scale(scale) {
+    this.#scale = scale;
+    for (let i = this.#balls.length - 1; i >= 0; i--) {
+      this.#balls.splice(i, 1);
+    }
   }
+
+  init(){}
 
   /**
    * @param randomBallTypeNumber
    */
   createBall({
-
-
-    randomBallTypeNumber
-             }){
-    console.log("createBall called with type: ");
+               randomBallTypeNumber,
+               ballWeight,
+               relativePosXPercentage,
+               scale
+  }){
     const ballType = this.#ballFactory.ballTypeMap[""+randomBallTypeNumber];
-    this.#balls.push(this.#ballFactory.createBall({type:ballType, playField: this.#playField}));
+    this.#balls.push(
+      this.#ballFactory.createBall({
+        type: ballType,
+        playField: this.#playField,
+        weight:ballWeight,
+        scale: scale,
+        relativePosXPercentage: relativePosXPercentage
+      })
+    );
   }
-
 
   updateBalls() {
     const playFieldWidth  = this.#playField.bounds.width;
@@ -55,20 +68,20 @@ class BallManager {
 
     for (let i = this.#balls.length - 1; i >= 0; i--) {
       const ball = this.#balls[i];
-      ball.update();
+      ball.update({scale: this.#scale});
   
       // Remove fully "dead" balls
       if (!ball.isActive) {
-        if (ball.weight <= 0) {
+        if (ball.scaleWeight <= 0) {
           this.#balls.splice(i, 1);
         }
         continue; // skip rest of logic for inactive balls
       }
   
-      const radius = ball.weight / 2;
+      const radius = (ball.scaleWeight / 2);
   
-      // Only check batt collision when near the bottom
-      const batZoneY = playFieldHeight - 50; // maybe make this a constant
+      // Only check bat collision when near the bottom
+      const batZoneY = playFieldHeight - 50 * this.#scale; // maybe make this a constant
   
       if (ball.posY > batZoneY - radius) {
         const hitArea = this.checkBallBatCollision(ball);
@@ -89,7 +102,7 @@ class BallManager {
           const offset = hitAreaRounded - (this.#bat.width / 2 +1);
   
           // combine your two lines:
-          ball.velX = (ball.velX + offset) / 18;
+          ball.velX = ((ball.velX + offset) / 18)
           ball.velY -= 1;
         } else {
           ball.isActive = false;
@@ -97,7 +110,7 @@ class BallManager {
       }
 
       // Bounce off left / right walls
-      if (ball.posX <= radius || ball.posX >= playFieldWidth - radius) {
+      if (ball.posX <= this.#playField.bounds.startX+radius || ball.posX >= this.#playField.bounds.endX - radius) {
         ball.velX *= -1;
       }
     }
@@ -125,7 +138,7 @@ class BallManager {
   
   drawBalls(){
    this.#balls.forEach((ball) =>{
-      ball.draw();
+      ball.draw({speedFactor: this.#scale});
     }) 
   }
 }

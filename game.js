@@ -1,6 +1,6 @@
+'use strict'
 class Game {
-  
-  #bat;
+
   #timer;
   #score;
   #playField;
@@ -14,10 +14,9 @@ class Game {
   #players =[];
   #playFieldFactory;
   #playerFactory;
-  #speedFactor;
+  #scale;
   #ballController;
 
-  
   constructor({
     stageProperties,
     timer,
@@ -30,7 +29,7 @@ class Game {
     this.#score = score;
     this.#inputManager = inputManager;
     this.#windowManager = windowManager;
-    this.#speedFactor = canvasWidth / 1000;
+    this.#scale = canvasWidth / 1000;
 
     this.#playFieldFactory = new PlayFieldFactory({
       stageProperties: this.#stageProperties,
@@ -47,7 +46,7 @@ class Game {
     this.#playFieldFactory.setNumberOfTotalPlayFields({numberOfTotalPlayFields:2})
 
     this.#players[0] = this.#playerFactory.createPlayer({
-      speedFactor: this.#speedFactor,
+      scale: this.#scale,
       controls: {
         left: 37,
         right: 39
@@ -69,7 +68,8 @@ class Game {
       stageProperties: this.#stageProperties,
       players: this.#players,
       gameMode: "duo",
-      game: this
+      game: this,
+      scale: this.#scale
     })
 
     this.#ballController.init();
@@ -93,7 +93,8 @@ class Game {
   }
 
   #updateFromWindowManager = ()=> {
-    this.#speedFactor = canvasHeight / 100;
+    this.#scale = canvasWidth / 1000;
+    this.#ballController.scale = this.#scale;
   }
 
   #drawRunning(){

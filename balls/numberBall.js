@@ -2,10 +2,12 @@ class NumberBall extends Ball {
 
   #numberOfBounces;
   
-  constructor({stageProperties, playField}){
+  constructor({stageProperties, playField, weight, relativePosXPercentage}){
     super({
       stageProperties,
-      playField
+      playField,
+      weight,
+      relativePosXPercentage
     })
     this.#numberOfBounces = 0;
   }
@@ -15,13 +17,12 @@ class NumberBall extends Ball {
     this.scorePoints = this.#numberOfBounces;
   }
   
-  update(){
-    super.update();
+  update({speedFactor}) {
+    super.update({speedFactor});
   }
   
-  draw(){ 
-    super.draw();
-    fill(255);                    
+  draw({speedFactor}){
+    super.draw({speedFactor})
     textSize(this.weight *0.6);
   
     push();

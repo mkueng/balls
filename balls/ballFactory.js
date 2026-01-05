@@ -1,73 +1,61 @@
 class BallFactory {
-  
-  #ballTypes;
-  #ballTypeMap;
   #stageProperties;
   #ballTypeDistribution;
-  
-  constructor({
-    stageProperties
-  }){
+  #ballTypeMap = {};
+  #ballClasses;
+
+  constructor({ stageProperties }) {
     this.#stageProperties = stageProperties;
+
+    this.#ballTypeDistribution = {
+      extender: 7,
+      plain: 45,
+      number: 30,
+      rainbow: 3,
+      speed: 5,
+      curve: 10,
+    };
     this.#ballTypeDistribution = {
 
-      "extender": 7,
-      "plain": 45,
-      "number": 30,
-      "rainbow": 3,
-      "speed" : 5,
-      "curve": 10
+      plain: 100
 
+    };
 
-    } 
-    this.#ballTypeMap = {};
+    this.#ballClasses = {
+      plain: Ball,
+      number: NumberBall,
+      extender: ExtenderBall,
+      rainbow: RainbowBall,
+      speed: BattSpeedUpBall,
+      curve: CurveBall,
+    };
+
+    this.#buildBallTypeMap();
   }
-  
-  get ballTypeMap(){return this.#ballTypeMap};
 
-  init = ()=>{
-    
+  get ballTypeMap() {
+    return this.#ballTypeMap;
+  }
+
+  #buildBallTypeMap() {
     let index = 1;
-    for (const ballType in this.#ballTypeDistribution) {
-      for (let i=0; i< this.#ballTypeDistribution[ballType]; i++){
-        this.#ballTypeMap[index] = ballType;
-        index++;
+    for (const type in this.#ballTypeDistribution) {
+      for (let i = 0; i < this.#ballTypeDistribution[type]; i++) {
+        this.#ballTypeMap[index++] = type;
       }
     }
-    
-    this.#ballTypes = {
-      plain: (playField)=> new Ball({
-        stageProperties: this.#stageProperties,
-        playField: playField
-      }),
-      
-      number: (playField)=> new NumberBall({
-        stageProperties: this.#stageProperties,
-        playField: playField
-      }),
-      
-      extender: (playField)=> new ExtenderBall({
-        stageProperties: this.#stageProperties,
-        playField: playField
-      }),
-      
-      rainbow: (playField)=> new RainbowBall({
-        stageProperties: this.#stageProperties,
-        playField: playField
-      }),
-      
-      speed: (playField)=> new BattSpeedUpBall({
-        stageProperties: this.#stageProperties,
-        playField: playField
-      }),
-      curve: (playField)=> new CurveBall({
-        stageProperties: this.#stageProperties,
-        playField: playField
-      })
-    }
   }
-  
-  createBall({type,playField}){
-    return this.#ballTypes[type](playField);
+
+  createBall({ type, playField, weight, relativePosXPercentage, scale }) {
+    const BallCtor = this.#ballClasses[type];
+    if (!BallCtor) throw new Error(`Unknown ball type: ${type}`);
+
+    return new BallCtor({
+      stageProperties: this.#stageProperties,
+      playField,
+      weight,
+      scale,
+      relativePosXPercentage,
+    });
   }
 }

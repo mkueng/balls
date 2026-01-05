@@ -56,6 +56,14 @@ class Bat {
           fill(100, 100, 100);
           noStroke();
           rect(this.#posX, this.#posY, this.#width, this.#height);
+          arc(
+            this.#posX + this.#width / 2, // center x
+            this.#posY,                  // top of rectangle
+            this.#width,                 // arc width
+            this.#width * 0.2,                 // arc height (circle)
+            PI,                           // start angle
+            TWO_PI                        // end angle
+          );
         }
       },
 
@@ -106,6 +114,7 @@ class Bat {
           fill(Math.floor(random(255)), Math.floor(random(255)), Math.floor(random(255)));
           noStroke();
           rect(this.#posX, this.#posY, this.#width, this.#height);
+
         }
 
       },
@@ -149,11 +158,12 @@ class Bat {
 
   init() {
     this.#inputManager.subscribe(this);
+    this.setBounds({playFieldBounds:this.#playFieldBounds});
   }
 
   setBounds({playFieldBounds}) {
     this.#playFieldBounds = playFieldBounds;
-    this.#posX = playFieldBounds.startX + (playFieldBounds.width / 2) - (this.#width / 2);
+    this.#posX = (playFieldBounds.startX + playFieldBounds.endX) / 2 - (this.#width/2);
     this.#posY = canvasHeight - canvasHeight / 15;
     this.#width = canvasWidth / 6;
     this.#height = canvasHeight / 30;

@@ -2,10 +2,11 @@ class BattSpeedUpBall extends Ball {
 
   #time;
   
-  constructor({stageProperties, playField}){
+  constructor({stageProperties, playField, relativePosXPercentage}){
     super({
       stageProperties: stageProperties,
       playField: playField,
+      relativePosXPercentage,
       weight: 40,
       color: [0,0,255]
     })
@@ -22,8 +23,8 @@ class BattSpeedUpBall extends Ball {
     };
   }
   
-  update(){
-    super.update();
+  update({speedFactor}) {
+    super.update({speedFactor});
   }
   
   draw(){

@@ -3,11 +3,12 @@ class CurveBall extends Ball {
   
   #time;
   
-  constructor({stageProperties, playField}) {
+  constructor({stageProperties, playField, weight, relativePosXPercentage}) {
     super({
       stageProperties,
       playField,
-      weight:  Math.floor(random(45,60))
+      weight,
+      relativePosXPercentage
     });
     this.#time = 0;
     this.scorePoints = 25;
@@ -18,15 +19,15 @@ class CurveBall extends Ball {
   }
   
   
-  update() {
+  update({speedFactor}) {
     this.#time += 0.1; // pulsing speed
     // Pulsation: value oscillates between -1 and +1
     let pulse = sin(this.#time);
     this.velX = this.velX + pulse*0.3;
-    super.update();
+    super.update({speedFactor});
   }
   
-  draw(){
+  draw({speedFactor}){
      
     noStroke();
      fill(this.color[0],this.color[1], this.color[2]);
@@ -38,9 +39,9 @@ class CurveBall extends Ball {
       text("C", -this.weight/1.5, this.weight/4);
     pop();
    
-    circle(this.posX,this.posY,this.weight);
+    circle(this.posX,this.posY,this.weight*speedFactor);
     fill(this.color[0]+20,this.color[1]+20, this.color[2]+20);
-    circle(this.posX,this.posY,this.weight-20);
+    circle(this.posX,this.posY,this.weight*speedFactor-(20*speedFactor));
     
   }
 }

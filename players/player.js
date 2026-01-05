@@ -15,6 +15,7 @@ class Player {
   #controls;
   #speedFactor;
   #subscribers;
+  #scaleFactor;
 
   constructor({
                 stageProperties,
@@ -65,6 +66,7 @@ class Player {
   #updateFromWindowManager = ()=>{
     const playFieldBounds =  this.#playField.setBoundaries();
     this.#bat.setBounds({playFieldBounds});
+    this.#ballManager.speedFactor = canvasWidth / 1000;
     //this.#speedFactor = canvasWidth / 1000;
     //this.#bat.speedFactor = this.#speedFactor;
   }
@@ -75,10 +77,11 @@ class Player {
 
     this.#playField = this.#playFieldFactory.createPlayField({});
     this.#playField.init();
-    console.log("playField: ", this.#playField);
 
+
+    const playFieldBounds =  this.#playField.setBoundaries();
     this.#bat = new Bat({
-      playFieldBounds: this.#playField.bounds,
+      playFieldBounds: playFieldBounds,
       stageProperties: this.#stageProperties,
       inputManager: this.#inputManager,
       controls: this.#controls,
@@ -87,6 +90,7 @@ class Player {
 
     this.#bat.init();
 
+    this.#bat.setBounds({playFieldBounds});
   }
 
   update(){
