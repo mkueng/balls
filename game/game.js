@@ -4,6 +4,7 @@ class Game {
   #timer;
   #score;
   #playField;
+  #numberOfTotalPlayFields;
   #stageProperties;
   #inputManager;
   #windowManager;
@@ -13,6 +14,7 @@ class Game {
   #gameOverScreen;
   #players =[];
   #playFieldFactory;
+  #endZoneFactory;
   #playerFactory;
   #scale;
   #ballController;
@@ -30,20 +32,28 @@ class Game {
     this.#inputManager = inputManager;
     this.#windowManager = windowManager;
     this.#scale = canvasWidth / 1000;
+    this.#numberOfTotalPlayFields = 2;
 
     this.#playFieldFactory = new PlayFieldFactory({
       stageProperties: this.#stageProperties,
-      windowManager: this.#windowManager
+      windowManager: this.#windowManager,
+      numberOfTotalPlayFields: this.#numberOfTotalPlayFields
+    })
+
+    this.#endZoneFactory = new EndZoneFactory({
+      stageProperties: this.#stageProperties,
+      windowManager: this.#windowManager,
+      numberOfTotalPlayFields :this.#numberOfTotalPlayFields
     })
 
     this.#playerFactory = new PlayerFactory({
       stageProperties: this.#stageProperties,
       windowManager: this.#windowManager,
       playFieldFactory: this.#playFieldFactory,
+      endZoneFactory: this.#endZoneFactory,
       inputManager: this.#inputManager
     })
 
-    this.#playFieldFactory.setNumberOfTotalPlayFields({numberOfTotalPlayFields:2})
 
     this.#players[0] = this.#playerFactory.createPlayer({
       scale: this.#scale,
@@ -85,7 +95,6 @@ class Game {
     this.#inputManager.subscribe(this);
     this.#windowManager.subscribe(this.#updateFromWindowManager);
 
-
   }
 
   init(){
@@ -100,11 +109,12 @@ class Game {
   #drawRunning(){
     background(100);
     this.#players.forEach(player=>{
-      player.update();
-      player.draw();
+      player.playField.draw();
       player.ballManager.updateBalls();
       player.ballManager.drawBalls();
-
+      player.update();
+      player.draw();
+      player.endZone.draw();
     })
 
     /*

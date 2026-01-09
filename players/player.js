@@ -12,10 +12,11 @@ class Player {
   #windowManager;
   #ballManager;
   #playFieldFactory;
+  #endZoneFactory;
   #controls;
-  #speedFactor;
   #subscribers;
   #scaleFactor;
+  #endZone;
 
   constructor({
                 stageProperties,
@@ -26,20 +27,20 @@ class Player {
                 playerNumber,
                 windowManager,
                 playFieldFactory,
-                speedFactor,
+                endZoneFactory,
                 controls
   }){
     this.#stageProperties = stageProperties;
     this.#inputManager = inputManager;
     this.#windowManager = windowManager;
     this.#playFieldFactory = playFieldFactory;
+    this.#endZoneFactory = endZoneFactory;
     this.#name = name ?? "player";
     this.#personalHighScore = personalHighScore ?? "0";
     this.#avatar = avatar ?? null;
     this.#currentScore = 0;
     this.#playerNumber = playerNumber;
     this.#controls = controls ?? [];
-    this.#speedFactor = speedFactor;
     this.#subscribers = [];
   }
 
@@ -59,6 +60,10 @@ class Player {
     return this.#playField;
   }
 
+  get endZone(){
+    return this.#endZone;
+  }
+
   subscribe({callback}){
     this.#subscribers.push(callback);
   }
@@ -66,9 +71,7 @@ class Player {
   #updateFromWindowManager = ()=>{
     const playFieldBounds =  this.#playField.setBoundaries();
     this.#bat.setBounds({playFieldBounds});
-    this.#ballManager.speedFactor = canvasWidth / 1000;
-    //this.#speedFactor = canvasWidth / 1000;
-    //this.#bat.speedFactor = this.#speedFactor;
+    this.#endZone.setBounds({playFieldBounds});
   }
 
   init() {
@@ -77,19 +80,23 @@ class Player {
 
     this.#playField = this.#playFieldFactory.createPlayField({});
     this.#playField.init();
-
-
     const playFieldBounds =  this.#playField.setBoundaries();
+
+    this.#endZone = this.#endZoneFactory.createEndZone({
+      fieldNumber: this.#playField.fieldNumber,
+      playFieldBounds: playFieldBounds
+    });
+
+    this.#endZone.init();
+
     this.#bat = new Bat({
       playFieldBounds: playFieldBounds,
       stageProperties: this.#stageProperties,
       inputManager: this.#inputManager,
-      controls: this.#controls,
-      speedFactor: this.#speedFactor
+      controls: this.#controls
     });
 
     this.#bat.init();
-
     this.#bat.setBounds({playFieldBounds});
   }
 
@@ -98,7 +105,7 @@ class Player {
   }
 
   draw(){
-    this.#playField.draw();
+    //this.#playField.draw();
     this.#bat.update();
     this.#bat.draw();
   }

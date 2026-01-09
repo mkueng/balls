@@ -17,7 +17,8 @@ class BallFactory {
     };
     this.#ballTypeDistribution = {
 
-      plain: 100
+     rainbow:100
+
 
     };
 

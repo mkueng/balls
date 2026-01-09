@@ -1,47 +1,70 @@
 class CurveBall extends Ball {
-
-  
   #time;
-  
-  constructor({stageProperties, playField, weight, relativePosXPercentage}) {
+
+  constructor({ stageProperties, playField, weight, relativePosXPercentage, scale }) {
     super({
       stageProperties,
       playField,
       weight,
-      relativePosXPercentage
+      relativePosXPercentage,
+      scale
     });
+
     this.#time = 0;
     this.scorePoints = 25;
   }
-  
-  hit(){
-   
+
+  hit() {
+    // define behavior if needed
   }
-  
-  
-  update({speedFactor}) {
-    this.#time += 0.1; // pulsing speed
-    // Pulsation: value oscillates between -1 and +1
-    let pulse = sin(this.#time);
-    this.velX = this.velX + pulse*0.3;
-    super.update({speedFactor});
+
+  update() {
+    this.#time += 0.1;
+
+    // curve acceleration (oscillates)
+    const pulse = sin(this.#time);
+
+    // amount of sideways acceleration scales with size so it "feels" consistent
+    const ax = 0.55 * this.scale; // tune this
+
+    this.velX = this.velX + pulse * ax;
+
+    // prevent runaway horizontal speed
+    const maxVX = 10 * this.scale; // tune this
+    if (this.velX >  maxVX) this.velX =  maxVX;
+    if (this.velX < -maxVX) this.velX = -maxVX;
+
+    super.update();
   }
-  
-  draw({speedFactor}){
-     
-    noStroke();
-     fill(this.color[0],this.color[1], this.color[2]);
+
+  draw() {
+    const d = this.scaleWeight;                 // diameter (scaled)
+    const innerD = Math.max(2, d - d * 0.35);   // inner circle, never negative
+
     push();
-      translate(this.posX, this.posY);   // move to ball center (or near it)
-      rotate(radians(this.posX)); // tilt
-      textSize(this.weight *0.6);
-      textFont('Impact');
-      text("C", -this.weight/1.5, this.weight/4);
+    noStroke();
+
+    // outer
+    fill(this.color[0], this.color[1], this.color[2]);
+    circle(this.posX, this.posY, d);
+
+    // inner highlight
+    fill(
+      Math.min(255, this.color[0] + 20),
+      Math.min(255, this.color[1] + 20),
+      Math.min(255, this.color[2] + 20)
+    );
+    circle(this.posX, this.posY, innerD);
+
+    // letter
+    translate(this.posX, this.posY);
+    rotate(radians(this.posX * 0.2)); // subtle tilt (optional)
+    textAlign(CENTER, CENTER);
+    textFont('Impact');
+    fill(255);
+    textSize(d * 0.6);
+    text("C", 0, 0);
+
     pop();
-   
-    circle(this.posX,this.posY,this.weight*speedFactor);
-    fill(this.color[0]+20,this.color[1]+20, this.color[2]+20);
-    circle(this.posX,this.posY,this.weight*speedFactor-(20*speedFactor));
-    
   }
 }

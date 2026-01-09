@@ -13,13 +13,10 @@ class PlayFieldFactory {
               }){
       this.#stageProperties = stageProperties;
       this.#windowManager = windowManager;
-      this.#numberOfTotalPlayFields = 0;
+      this.#numberOfTotalPlayFields = numberOfTotalPlayFields;
       this.#fieldNumber = 0;
 }
 
-setNumberOfTotalPlayFields({numberOfTotalPlayFields}) {
-    this.#numberOfTotalPlayFields = numberOfTotalPlayFields;
-}
 
 createPlayField({}){
     this.#fieldNumber++;

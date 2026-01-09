@@ -7,7 +7,7 @@ class StageManager {
       playFieldWidth: 600,
       playFieldHeight: windowHeight,
       battWidth: 100,
-      battHeight: 20,
+      battHeight: 10,
       timer: 120
     },
     

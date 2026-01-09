@@ -18,6 +18,7 @@ class Ball{
   #relativePosXPercentage;
   #scale;
   #scaleWeight;
+  #scaleRadius;
 
   constructor({
                 time,
@@ -48,6 +49,7 @@ class Ball{
     this.#scale = scale ?? 1;
     this.#weight = weight;
     this.#scaleWeight = this.#weight * this.#scale;
+    this.#scaleRadius = this.#scaleWeight / 2;
     this.#posY = posY ?? 0 - this.#scaleWeight;
     this.#color =
       color ?? [
@@ -70,7 +72,9 @@ class Ball{
   get velX() {return this.#velX};
   get velY() {return this.#velY};
   get weight() {return this.#weight};
+  get scale() {return this.#scale};
   get scaleWeight() {return this.#scaleWeight};
+  get scaleRadius() {return this.#scaleRadius};
   get isActive() {return this.#isActive};
   get color() {return this.#color};
   get scorePoints() {return this.#scorePoints};
@@ -84,6 +88,7 @@ class Ball{
   set scale(scale){
     this.#scale = scale
     this.#scaleWeight = this.#weight * this.#scale;
+    this.#scaleRadius = this.#scaleWeight / 2;
   };
 
   getScorePoints(){
@@ -98,37 +103,60 @@ class Ball{
    * Update the ball position
    * @param scale
    */
-  update(){
+  update() {
     if (this.#isActive) {
-      
+
+      // gravity in "pixels per frame²" at scale = 1
+      const baseG = 0.20;            // tune this
+      const g = baseG * this.#scale; // <-- makes fall feel consistent when playfield scales
+
       if (this.#direction === true) {
-      this.#velY = this.#velY + (this.#scaleWeight / 200);
-      this.#posY = this.#posY + this.#velY;
-      this.#posX = this.#posX + this.#velX;
-    }
-    
-    if (this.#direction === false) {
-      this.#velY = this.#velY - (this.#scaleWeight / 200) ;
-      this.#posY = this.#posY - this.#velY;
-      this.#posX = this.#posX + this.#velX;
-    }
-    
+        // falling down
+        this.#velY = this.#velY + g;
+        this.#posY = this.#posY + this.#velY;
+        this.#posX = this.#posX + this.#velX;
+      }
+
+      if (this.#direction === false) {
+        // going up
+        this.#velY = this.#velY - g;
+        if (this.#velY < 0) this.#velY = 0;
+        this.#posY = this.#posY - this.#velY;
+        this.#posX = this.#posX + this.#velX;
+      }
+
       if (this.#direction === false && this.#velY <= 0) {
         this.#direction = true;
       }
+
     } else {
-      console.log("inactive ball shrinking");
-      this.#scaleWeight = this.#scaleWeight-1;
-      this.#posY = this.#posY + 3;
+      // shrinking / dying animation should also scsale
+      this.#scaleWeight = this.#scaleWeight - 0.2;
+      this.#posY = this.#posY + this.#velY * this.#scale;
+
+
+      if (this.#velY * this.#scale > 2) {
+        this.#velY = this.#velY - 2 * this.#scale;
+      }
+      if (this.#velY < 1) {
+        this.#velY = 1
+      }
+      if (this.#velX > 1) {
+        this.#velX = this.#velX - 3 * this.#scale;
+      }
+
+      if (this.#velX < 0) {
+        this.#velX = 0
+      }
     }
-    
   }
+
 
   /**
    * Draw the ball
    * @param scale
    */
-  draw({scale}){
+  draw(){
     noStroke();
     fill(this.#color[0],this.#color[1], this.#color[2]);
     circle(this.#posX,this.#posY,this.#scaleWeight);

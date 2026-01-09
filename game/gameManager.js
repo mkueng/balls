@@ -40,7 +40,6 @@ class GameManager {
 
   setupGame(){
 
-
     this.#game = new Game({
       windowManager: this.#windowManager,
       inputManager: this.#inputManager,

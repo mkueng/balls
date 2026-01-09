@@ -42,6 +42,10 @@ class PlayField {
     this.setBoundaries();
   }
 
+  /**
+   *
+   * @returns {{width: number, height: number, startX: number, startY: number, endX: number, endY: number}}
+   */
   setBoundaries() {
     const halfCanvas = Math.floor(canvasWidth / 2);
     const offset =
@@ -69,11 +73,7 @@ class PlayField {
       width,
       height
     } = this.#bounds;
-    fill(200,200,200);
-    rect(startX, startY, width, height);
-    noFill();
-    stroke(255, 100*this.#fieldNumber, 0);
-    strokeWeight(this.#strokeWeight);
+    fill(210,238,245);
     rect(startX, startY, width, height);
   }
 }

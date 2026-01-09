@@ -6,6 +6,7 @@ class PlayerFactory {
   #playerNumber;
   #playFieldFactory;
   #inputManager;
+  #endZoneFactory;
 
 
   constructor({
@@ -13,19 +14,18 @@ class PlayerFactory {
     windowManager,
     numberOfTotalPlayers,
     playFieldFactory,
+    endZoneFactory,
     inputManager
               }){
     this.#stageProperties = stageProperties;
     this.#windowManager = windowManager;
     this.#numberOfTotalPlayers = numberOfTotalPlayers;
     this.#playFieldFactory = playFieldFactory;
+    this.#endZoneFactory = endZoneFactory;
     this.#inputManager = inputManager;
     this.#playerNumber = 0;
   }
 
-  setNumberOfTotalPlayers(numberOfTotalPlayers){
-    this.#numberOfTotalPlayers = numberOfTotalPlayers;
-  }
 
   createPlayer({
     controls,
@@ -38,6 +38,7 @@ class PlayerFactory {
       inputManager: this.#inputManager,
       windowManager: this.#windowManager,
       playFieldFactory: this.#playFieldFactory,
+      endZoneFactory: this.#endZoneFactory,
       speedFactor: speedFactor
     })
   }

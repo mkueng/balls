@@ -1,3 +1,4 @@
+'use strict';
 class BallManager {
 
   #stageProperties;
@@ -10,6 +11,17 @@ class BallManager {
   #playField;
   #scale;
 
+  /**
+   *
+   * @param stageProperties
+   * @param ballFactory
+   * @param bat
+   * @param onScore
+   * @param onEffect
+   * @param playerId
+   * @param playField
+   * @param scale
+   */
   constructor({
     stageProperties,
     ballFactory,
@@ -20,7 +32,6 @@ class BallManager {
     playField,
     scale
   }){
-
     this.#bat = bat;
     this.#onScore = onScore;
     this.#playerId = playerId;
@@ -42,7 +53,11 @@ class BallManager {
   init(){}
 
   /**
+   *
    * @param randomBallTypeNumber
+   * @param ballWeight
+   * @param relativePosXPercentage
+   * @param scale
    */
   createBall({
                randomBallTypeNumber,
@@ -62,6 +77,9 @@ class BallManager {
     );
   }
 
+  /**
+   *
+   */
   updateBalls() {
     const playFieldWidth  = this.#playField.bounds.width;
     const playFieldHeight = this.#playField.bounds.height;
@@ -77,33 +95,38 @@ class BallManager {
         }
         continue; // skip rest of logic for inactive balls
       }
-  
-      const radius = (ball.scaleWeight / 2);
-  
+
       // Only check bat collision when near the bottom
-      const batZoneY = playFieldHeight - 50 * this.#scale; // maybe make this a constant
-  
+      const radius = (ball.scaleRadius);
+      const playFieldTop = this.#playField.bounds.startY;
+      const batZoneY = playFieldTop + playFieldHeight - 70 * this.#scale;
+
       if (ball.posY > batZoneY - radius) {
         const hitArea = this.checkBallBatCollision(ball);
   
         if (hitArea !== false && ball.velY > 3) {
           ball.direction = false;
+
+          // Update score
           this.#onScore({
             playerId:this.#playerId,
             points:ball.getScorePoints()
           });
+
+          // Apply effect
           let effect = ball.hit();
           if (effect) this.#onEffect({
             playerId:this.#playerId,
             effect:effect
           });
-  
+
+          // Calculate offset from bat center
           const hitAreaRounded = Math.floor(hitArea);
           const offset = hitAreaRounded - (this.#bat.width / 2 +1);
   
           // combine your two lines:
           ball.velX = ((ball.velX + offset) / 18)
-          ball.velY -= 1;
+          ball.velY -= 1 * this.#scale + (ball.scaleWeight / 50) // bat bounce factor !;
         } else {
           ball.isActive = false;
         }
@@ -116,15 +139,20 @@ class BallManager {
     }
   }
 
-  
+  /**
+   *
+   * @param ball
+   * @returns {number|boolean}
+   */
   checkBallBatCollision(ball){
     const ballPosX = ball.posX;
     const ballPosY = ball.posY;
-    const ballRadius = ball.radius;
-    
+    const ballRadius = ball.scaleRadius;
+
+    const batHeight = this.#bat.height;
     const batLeft = this.#bat.posX;
     const batRight = this.#bat.posX + this.#bat.width;
-    const batTop = this.#bat.posY;
+    const batTop = this.#bat.posY - ballRadius
     const batBottom = this.#bat.posY +this.#bat.height;
     
     const hitsHorizontally = ballPosX + ballRadius >= batLeft && ballPosX - ballRadius <= batRight;
@@ -133,9 +161,11 @@ class BallManager {
     if (hitsHorizontally && hitsVertically) {
       return ballPosX - batLeft
     } else return false;
-    
   }
-  
+
+  /**
+   *
+   */
   drawBalls(){
    this.#balls.forEach((ball) =>{
       ball.draw({speedFactor: this.#scale});

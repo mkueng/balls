@@ -19,14 +19,11 @@ class Bat {
   #controls;
 
   constructor({
-                stageProperties,
                 inputManager,
                 playFieldBounds,
-                controls,
-                speedFactor
+                controls
               }) {
-    this.#width = stageProperties.battWidth;
-    this.#height = stageProperties.battHeight;
+
     this.#posX = playFieldBounds.startX + (playFieldBounds.width / 2) - (this.#width / 2);
     this.#posY = canvasHeight - 50;
     this.#playFieldWidth = canvasWidth / 2;
@@ -37,7 +34,6 @@ class Bat {
     this.#isInSpecialState = false;
     this.#playFieldBounds = playFieldBounds;
     this.#controls = controls;
-
 
     this.#states = {
 
@@ -57,12 +53,12 @@ class Bat {
           noStroke();
           rect(this.#posX, this.#posY, this.#width, this.#height);
           arc(
-            this.#posX + this.#width / 2, // center x
+            this.#posX + this.#width / 2,// center x
             this.#posY,                  // top of rectangle
             this.#width,                 // arc width
-            this.#width * 0.2,                 // arc height (circle)
-            PI,                           // start angle
-            TWO_PI                        // end angle
+            this.#width * 0.2,           // arc height (circle)
+            PI,                          // start angle
+            TWO_PI                       // end angle
           );
         }
       },
@@ -143,15 +139,12 @@ class Bat {
   get posX() {
     return this.#posX
   }
-
   get posY() {
     return this.#posY
   }
-
   get width() {
     return this.#width
   }
-
   get height() {
     return this.#height
   }
@@ -166,7 +159,7 @@ class Bat {
     this.#posX = (playFieldBounds.startX + playFieldBounds.endX) / 2 - (this.#width/2);
     this.#posY = canvasHeight - canvasHeight / 15;
     this.#width = canvasWidth / 6;
-    this.#height = canvasHeight / 30;
+    this.#height = canvasHeight / 70;
     this.#speed = canvasHeight / 100;
   }
 

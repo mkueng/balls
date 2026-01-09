@@ -2,14 +2,15 @@ class ExtenderBall extends Ball {
 
   #time;
   
-  constructor({stageProperties, playField, relativePosXPercentage}){
+  constructor({stageProperties, playField, relativePosXPercentage, scale}){
     super({
     
       stageProperties: stageProperties,
       playField: playField,
-      weight: 30,
-      color: [255,0,0],
-      relativePosXPercentage
+      weight: 20,
+      color: [255,100,100],
+      relativePosXPercentage,
+      scale
     })
     
     this.#time = 0;
@@ -24,27 +25,33 @@ class ExtenderBall extends Ball {
     };
   }
   
-  update({speedFactor}) {
-    super.update({speedFactor});
+  update() {
+    super.update();
   }
-  
-  draw({speedFactor}){
-    this.#time += 0.1; // pulsing speed
-    // Pulsation: value oscillates between -1 and +1
-    let pulse = sin(this.#time);
 
-    // Pulse strength → adjust 0.1 for how "big" the pulse is
-    let pulseSize = (this.weight * (1 + 0.3 * pulse)*1.5)*speedFactor;
+  draw(){
+    this.#time += 0.1;
+    const pulse = sin(this.#time);
+
+    const base = this.scaleWeight;   // diameter in px
+    const amp = 0.5;                 // 30% pulse
+    const glow = 1.5;                // overall size multiplier (optional)
+    const pulseSize = base * glow * (1 + amp * pulse);
+
     push();
     noStroke();
-    fill(this.color[0],this.color[1], this.color[2]);
-    circle(this.posX,this.posY,pulseSize);
-    fill(255,255,0);                    
-    textSize(20*speedFactor);
-    textFont('Impact');
-    textAlign(CENTER);
-    text("E", this.posX, this.posY+(this.weight/4)*speedFactor);
+    fill(this.color[0], this.color[1], this.color[2]);
+    circle(this.posX, this.posY, pulseSize);
+/*
+    fill(1,1,1);
+    textSize(20 * this.scale);               // use this.scale, not `scale`
+    textFont('Arial');
+    textAlign(CENTER, CENTER);
+    text("E", this.posX, this.posY);
+
+ */
     pop();
   }
+
 
 }

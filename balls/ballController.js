@@ -8,6 +8,14 @@ class BallController {
   #ballFactory;
   #scale;
 
+  /**
+   *
+   * @param stageProperties
+   * @param gameMode
+   * @param players
+   * @param game
+   * @param scale
+   */
   constructor({
     stageProperties,
     gameMode,
@@ -29,6 +37,9 @@ class BallController {
     })
   }
 
+  /**
+   *
+   */
   init(){
     this.#ballFactory = new BallFactory({
       stageProperties: this.#stageProperties
@@ -48,6 +59,11 @@ class BallController {
     })
   }
 
+  /**
+   *
+   * @param playerId
+   * @param effect
+   */
   handleEffect({playerId, effect}){
     // Apply effect to player
     this.#game.applyEffect({
@@ -56,6 +72,11 @@ class BallController {
     });
   }
 
+  /**
+   *
+   * @param playerId
+   * @param points
+   */
   handleScoreUpdate({playerId, points}){
     // @TODO: Update score in game score manager
     /*
@@ -66,12 +87,15 @@ class BallController {
 */
   }
 
+  /**
+   *
+   */
   createBalls(){
     const randomBallTypeNumber = Math.floor(random(1,100));
-    //const randomBallWeight = Math.floor(random(25,60));
-    const ballWeight =  50;
-    //const relativePosXPercentage = Math.floor(random(10,90));
-    const relativePosXPercentage = 50;
+    const ballWeight = Math.floor(random(25,60));
+    //const ballWeight =  30;
+    const relativePosXPercentage = Math.floor(random(10,90));
+    //const relativePosXPercentage = 50;
     this.#players.forEach(player => {
       player.ballManager.createBall({
         randomBallTypeNumber: randomBallTypeNumber,
@@ -83,6 +107,9 @@ class BallController {
     })
   }
 
+  /**
+   *
+   */
   start(){
     this.#intervalId = setInterval(()=> {
       this.createBalls();

@@ -2,12 +2,13 @@ class NumberBall extends Ball {
 
   #numberOfBounces;
   
-  constructor({stageProperties, playField, weight, relativePosXPercentage}){
+  constructor({stageProperties, playField, weight, relativePosXPercentage, scale}){
     super({
       stageProperties,
       playField,
       weight,
-      relativePosXPercentage
+      relativePosXPercentage,
+      scale
     })
     this.#numberOfBounces = 0;
   }
@@ -17,19 +18,30 @@ class NumberBall extends Ball {
     this.scorePoints = this.#numberOfBounces;
   }
   
-  update({speedFactor}) {
-    super.update({speedFactor});
+  update() {
+    super.update();
   }
-  
-  draw({speedFactor}){
-    super.draw({speedFactor})
-    textSize(this.weight *0.6);
-  
+
+  draw(){
+    super.draw();
+
     push();
-      translate(this.posX, this.posY);   // move to ball center (or near it)
-      rotate(radians(this.posX)); // tilt
-      textFont('Impact');
-      text(this.#numberOfBounces, -this.weight/3, this.weight/4);
+    translate(this.posX, this.posY);
+
+    // subtle rotation (optional)
+    rotate(radians(this.posX * 0.2));
+
+    textAlign(CENTER, CENTER);
+    textFont('Impact');
+
+    // scale text with the ball
+    const textSizePx = this.scaleWeight * 0.6;
+    textSize(textSizePx);
+
+    // high contrast
+    fill(255);
+
+    text(this.#numberOfBounces, 0, 0);
     pop();
   }
 
