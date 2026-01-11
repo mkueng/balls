@@ -1,3 +1,4 @@
+'use strict';
 class NumberBall extends Ball {
 
   #numberOfBounces;

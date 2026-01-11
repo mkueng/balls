@@ -1,3 +1,4 @@
+'use strict';
 class ExtenderBall extends Ball {
 
   #time;
@@ -19,7 +20,7 @@ class ExtenderBall extends Ball {
    hit(){
      this.isActive=false;
     return {
-      target: "BATT",
+      target: "BAT",
       type: "EXTEND",
       props: null  
     };

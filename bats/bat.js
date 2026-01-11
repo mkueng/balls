@@ -17,29 +17,42 @@ class Bat {
   #isInSpecialState;
   #playFieldBounds;
   #controls;
+  #scale;
 
   constructor({
                 inputManager,
                 playFieldBounds,
-                controls
+                controls,
+                scale,
+                width,
+    height,
+                speed
               }) {
 
-    this.#posX = playFieldBounds.startX + (playFieldBounds.width / 2) - (this.#width / 2);
-    this.#posY = canvasHeight - 50;
+    this.#posY = canvasHeight - canvasHeight / 15;
     this.#playFieldWidth = canvasWidth / 2;
     this.#inputManager = inputManager;
     this.#moveLeft = false;
     this.#moveRight = false;
-    this.#speed = 8;
+    this.#speed = speed;
     this.#isInSpecialState = false;
     this.#playFieldBounds = playFieldBounds;
     this.#controls = controls;
+    this.#scale = scale;
+    this.#width = width;
+    this.#height = height;
+    this.#posX = (this.#playFieldBounds.startX + this.#playFieldBounds.endX) / 2 - (this.#width/2);
+    this.#inputManager.subscribe(this);
+    this.#playFieldBounds = playFieldBounds;
+
+
+
 
     this.#states = {
 
       normal: {
         transition: () => {
-          if (this.#width > 100) {
+          if (this.#width > canvasWidth / 8) {
             this.#width -= 2;
             this.#posX += 1;
           } else {
@@ -65,7 +78,7 @@ class Bat {
 
       extended: {
         transition: () => {
-          if (this.#width < 200) {
+          if (this.#width < canvasWidth /6) {
             this.#width += 2;
             this.#posX -= 1;
           } else {
@@ -83,6 +96,14 @@ class Bat {
           fill(200, 100, 100);
           noStroke();
           rect(this.#posX, this.#posY, this.#width, this.#height);
+          arc(
+            this.#posX + this.#width / 2,// center x
+            this.#posY,                  // top of rectangle
+            this.#width,                 // arc width
+            this.#width * 0.2,           // arc height (circle)
+            PI,                          // start angle
+            TWO_PI                       // end angle
+          );
         }
 
       },
@@ -118,7 +139,7 @@ class Bat {
         transition: () => {
           this.#stateInTransition = false;
           this.#currentState = this.#states.speedUp;
-          this.#speed = 15;
+          this.#speed = 15 * this.#scale;
           setTimeout(() => {
             this.#stateInTransition = true;
             this.#stateTransition = this.#states.normal.transition;
@@ -136,6 +157,8 @@ class Bat {
     this.#stateInTransition = false;
   }
 
+
+
   get posX() {
     return this.#posX
   }
@@ -149,18 +172,17 @@ class Bat {
     return this.#height
   }
 
-  init() {
-    this.#inputManager.subscribe(this);
-    this.setBounds({playFieldBounds:this.#playFieldBounds});
-  }
+  set scale(scale){
+    this.#scale = scale;
+  };
 
   setBounds({playFieldBounds}) {
     this.#playFieldBounds = playFieldBounds;
     this.#posX = (playFieldBounds.startX + playFieldBounds.endX) / 2 - (this.#width/2);
     this.#posY = canvasHeight - canvasHeight / 15;
-    this.#width = canvasWidth / 6;
+    this.#width = canvasWidth / 8;
     this.#height = canvasHeight / 70;
-    this.#speed = canvasHeight / 100;
+
   }
 
   applyEffect(effect) {
@@ -216,15 +238,16 @@ class Bat {
     }
     
     if (this.#moveLeft && this.#posX > this.#playFieldBounds.startX+canvasWidth/100) {
-      this.#posX -=this.#speed;
+      this.#posX -=this.#speed * this.#scale;
     }
     
     if (this.#moveRight && this.#posX < this.#playFieldBounds.endX-this.#width-canvasWidth/100) {
-      this.#posX +=this.#speed;
+      this.#posX +=this.#speed * this.#scale;
     }
   }
 
   draw() {
     this.#currentState.draw();
+
   }
 }

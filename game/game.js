@@ -12,13 +12,21 @@ class Game {
   #setupScreen;
   #matchState;
   #gameOverScreen;
-  #players =[];
+  #players = {};
   #playFieldFactory;
   #endZoneFactory;
   #playerFactory;
   #scale;
   #ballController;
 
+  /**
+   *
+   * @param stageProperties
+   * @param timer
+   * @param score
+   * @param inputManager
+   * @param windowManager
+   */
   constructor({
     stageProperties,
     timer,
@@ -51,28 +59,33 @@ class Game {
       windowManager: this.#windowManager,
       playFieldFactory: this.#playFieldFactory,
       endZoneFactory: this.#endZoneFactory,
-      inputManager: this.#inputManager
+      inputManager: this.#inputManager,
+      scale: this.#scale
     })
 
+    this.#players = {};
 
-    this.#players[0] = this.#playerFactory.createPlayer({
-      scale: this.#scale,
+    const player1= this.#playerFactory.createPlayer({
+      controls: {
+        left: 65,
+        right: 68
+      }
+    });
+   this.#players[player1.id] = player1;
+
+   const player2 = this.#playerFactory.createPlayer({
       controls: {
         left: 37,
         right: 39
       }
     });
 
-    this.#players[1] = this.#playerFactory.createPlayer({
-      controls: {
-        left: 65,
-        right: 68
-      }
-    });
+    this.#players[player2.id] = player2;
 
-    this.#players.forEach(player => {
+    for (const id in this.#players) {
+      const player = this.#players[id];
       player.init();
-    })
+    }
 
     this.#ballController = new BallController({
       stageProperties: this.#stageProperties,
@@ -104,29 +117,24 @@ class Game {
   #updateFromWindowManager = ()=> {
     this.#scale = canvasWidth / 1000;
     this.#ballController.scale = this.#scale;
+    for (const id in this.#players) {
+      const player = this.#players[id];
+      player.scale = this.#scale;
+    }
   }
 
   #drawRunning(){
     background(100);
-    this.#players.forEach(player=>{
+
+    for (const id in this.#players) {
+      const player = this.#players[id];
       player.playField.draw();
       player.ballManager.updateBalls();
       player.ballManager.drawBalls();
       player.update();
       player.draw();
       player.endZone.draw();
-    })
-
-    /*
-     this.#ballManager.updateBalls();
-     this.#ballManager.drawBalls();
-     this.#bat.update();
-     this.#bat.draw();
-     this.#endZone.draw();
-     this.#timer.draw();
-     this.#score.draw();
-
-     */
+    }
   }
   
   keyPressedEvent(keyCode) {
@@ -151,11 +159,13 @@ class Game {
   
   applyEffect({
                 playerId,
-                effect}){
-    /*
+                effect
+  }){
+    const player = this.#players[playerId];
+
     switch (effect.target) {
-      case "BATT": {this.#bat.applyEffect(effect); break}
-    }*/
+      case "BAT": {player.bat.applyEffect(effect); break}
+    }
   }
   
   updateScore(points){

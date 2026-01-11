@@ -32,9 +32,10 @@ class BallController {
 
   set scale(scale) {
     this.#scale = scale;
-    this.#players.forEach(player => {
+    for (const id in this.#players) {
+      const player = this.#players[id];
       player.ballManager.scale = scale;
-    })
+    }
   }
 
   /**
@@ -45,18 +46,20 @@ class BallController {
       stageProperties: this.#stageProperties
     });
 
-    this.#players.forEach(player => {
+    for (const id in this.#players) {
+      const player = this.#players[id];
       player.ballManager = new BallManager({
         stageProperties: this.#stageProperties,
         ballFactory: this.#ballFactory,
         bat: player.bat,
         playField: player.playField,
-        playerId: player.playerId,
+        playerId: player.id,
         scale: this.#scale,
         onEffect: (e) => this.handleEffect(e),
         onScore:(e) => this.handleScoreUpdate(e)
       })
-    })
+    }
+
   }
 
   /**
@@ -65,9 +68,10 @@ class BallController {
    * @param effect
    */
   handleEffect({playerId, effect}){
+
     // Apply effect to player
     this.#game.applyEffect({
-      playerId:playerId,
+      playerId: playerId,
       effect: effect
     });
   }
@@ -96,7 +100,8 @@ class BallController {
     //const ballWeight =  30;
     const relativePosXPercentage = Math.floor(random(10,90));
     //const relativePosXPercentage = 50;
-    this.#players.forEach(player => {
+    for (const id in this.#players) {
+      const player = this.#players[id];
       player.ballManager.createBall({
         randomBallTypeNumber: randomBallTypeNumber,
         ballWeight: ballWeight,
@@ -104,7 +109,7 @@ class BallController {
         scale: this.#scale
 
       })
-    })
+    }
   }
 
   /**

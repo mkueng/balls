@@ -9,19 +9,17 @@ class BallFactory {
 
     this.#ballTypeDistribution = {
       extender: 7,
-      plain: 45,
+      plain: 50,
       number: 30,
       rainbow: 3,
-      speed: 5,
       curve: 10,
     };
+
+    /*
     this.#ballTypeDistribution = {
-
-     rainbow:100
-
-
+      extender: 100
     };
-
+*/
     this.#ballClasses = {
       plain: Ball,
       number: NumberBall,

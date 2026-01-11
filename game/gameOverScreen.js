@@ -14,6 +14,5 @@ class GameOverScreen {
     text("Press Space", width / 2, height-height*0.05);
     pop(); 
   }
- 
 
 }

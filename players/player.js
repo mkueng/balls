@@ -1,5 +1,6 @@
 class Player {
-  
+
+  #id;
   #name;
   #personalHighScore;
   #avatar;
@@ -17,18 +18,21 @@ class Player {
   #subscribers;
   #scaleFactor;
   #endZone;
+  #scale;
 
   constructor({
                 stageProperties,
                 inputManager,
                 name,
+                id,
                 personalHighScore,
                 avatar,
                 playerNumber,
                 windowManager,
                 playFieldFactory,
                 endZoneFactory,
-                controls
+                controls,
+                scale
   }){
     this.#stageProperties = stageProperties;
     this.#inputManager = inputManager;
@@ -36,16 +40,28 @@ class Player {
     this.#playFieldFactory = playFieldFactory;
     this.#endZoneFactory = endZoneFactory;
     this.#name = name ?? "player";
+    this.#id = id;
     this.#personalHighScore = personalHighScore ?? "0";
     this.#avatar = avatar ?? null;
     this.#currentScore = 0;
     this.#playerNumber = playerNumber;
     this.#controls = controls ?? [];
     this.#subscribers = [];
+    this.#scale = scale;
+
+
   }
 
   set ballManager(ballManager){
     this.#ballManager = ballManager;
+  }
+
+  get name(){
+    return this.#name;
+  }
+
+  get id(){
+    return this.#id;
   }
 
   get ballManager(){
@@ -69,8 +85,10 @@ class Player {
   }
 
   #updateFromWindowManager = ()=>{
+    this.#scale = canvasWidth / 1000;
     const playFieldBounds =  this.#playField.setBoundaries();
     this.#bat.setBounds({playFieldBounds});
+    this.#bat.scale = this.#scale;
     this.#endZone.setBounds({playFieldBounds});
   }
 
@@ -93,11 +111,14 @@ class Player {
       playFieldBounds: playFieldBounds,
       stageProperties: this.#stageProperties,
       inputManager: this.#inputManager,
-      controls: this.#controls
+      controls: this.#controls,
+      scale: this.#scale,
+      speed: 8,
+      width: playFieldBounds.width / 4,
+      height: playFieldBounds.height / 70,
     });
 
-    this.#bat.init();
-    this.#bat.setBounds({playFieldBounds});
+
   }
 
   update(){

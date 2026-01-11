@@ -107,7 +107,7 @@ class Ball{
     if (this.#isActive) {
 
       // gravity in "pixels per frame²" at scale = 1
-      const baseG = 0.20;            // tune this
+      const baseG = 0.25;            // tune this
       const g = baseG * this.#scale; // <-- makes fall feel consistent when playfield scales
 
       if (this.#direction === true) {

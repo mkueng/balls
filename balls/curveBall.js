@@ -1,3 +1,4 @@
+'use strict'
 class CurveBall extends Ball {
   #time;
 
@@ -11,7 +12,7 @@ class CurveBall extends Ball {
     });
 
     this.#time = 0;
-    this.scorePoints = 25;
+    this.scorePoints = 10;
   }
 
   hit() {
@@ -38,15 +39,15 @@ class CurveBall extends Ball {
   }
 
   draw() {
-    const d = this.scaleWeight;                 // diameter (scaled)
-    const innerD = Math.max(2, d - d * 0.35);   // inner circle, never negative
+    const diameter = this.scaleWeight;                 // diameter (scaled)
+    const innerD = Math.max(2, diameter - diameter * 0.35);   // inner circle, never negative
 
     push();
     noStroke();
 
     // outer
     fill(this.color[0], this.color[1], this.color[2]);
-    circle(this.posX, this.posY, d);
+    circle(this.posX, this.posY, diameter);
 
     // inner highlight
     fill(
@@ -62,7 +63,7 @@ class CurveBall extends Ball {
     textAlign(CENTER, CENTER);
     textFont('Impact');
     fill(255);
-    textSize(d * 0.6);
+    textSize(diameter * 0.6);
     text("C", 0, 0);
 
     pop();
