@@ -126,7 +126,7 @@ class BallManager {
   
           // combine your two lines:
           ball.velX = ((ball.velX + offset) / 18)
-          ball.velY -= 1 * this.#scale + (ball.scaleWeight / 50) // bat bounce factor !;
+          ball.velY -= 1 * this.#scale + (ball.scaleWeight / 100) // bat bounce factor !;
         } else {
           ball.isActive = false;
         }
