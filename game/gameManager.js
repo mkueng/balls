@@ -9,6 +9,7 @@ class GameManager {
   #assetManager;
   #controls;
   #factoryRegistry;
+  #viewRegistry;
 
   constructor({
     assetManager,
@@ -32,6 +33,10 @@ class GameManager {
       windowManager: this.#windowManager,
       inputManager: this.#inputManager
     });
+    this.#viewRegistry = new ViewRegistry({
+      windowManager: this.#windowManager
+    })
+
     this.#stageProperties =  this.#stageManager.getStageProperties({stage:"stage"+this.#stageNumber});
   }
 
@@ -47,7 +52,8 @@ class GameManager {
       inputManager: this.#inputManager,
       stageProperties: this.#stageProperties,
       controls: this.#controls,
-      factoryRegistry: this.#factoryRegistry
+      factoryRegistry: this.#factoryRegistry,
+      viewRegistry: this.#viewRegistry
     })
 
     return this.#game;

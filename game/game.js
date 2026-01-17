@@ -9,21 +9,16 @@ class Game {
   #windowManager;
   #gameState;
   #players = {};
-  #playFieldFactory;
-  #endZoneFactory;
-  #playerFactory;
   #scale;
   #ballController;
-  #gameRunningView;
-  #gameOverView;
-  #gameMenuView;
-  #gamePausedView;
   #controls;
   #assetManager;
   #background;
   #intervalId;
   #factoryRegistry;
+  #viewRegistry;
   #factories = {};
+  #views= {};
 
   /**
    * @constructor
@@ -34,12 +29,13 @@ class Game {
    * @param windowManager
    */
   constructor({
-    stageProperties,
-    inputManager,
-    windowManager,
-    assetManager,
-    controls,
-    factoryRegistry
+                stageProperties,
+                inputManager,
+                windowManager,
+                assetManager,
+                controls,
+                factoryRegistry,
+                viewRegistry
   }){
     this.#stageProperties = stageProperties;
     this.#inputManager = inputManager;
@@ -53,6 +49,7 @@ class Game {
     this.#intervalId = null;
     this.#controls = controls;
     this.#factoryRegistry = factoryRegistry;
+    this.#viewRegistry = viewRegistry;
     this.#factories = this.#factoryRegistry.createFactories({
       numberOfTotalPlayFields: this.#numberOfTotalPlayFields,
       scale: this.#scale
@@ -82,32 +79,16 @@ class Game {
       scale: this.#scale
     })
 
-
-    this.#gameMenuView = new GameMenuView({
-      windowManager: this.#windowManager,
-      scale: this.#scale
-    });
-
-    this.#gameOverView = new GameOverView({
-      windowManager: this.#windowManager,
-      scale: this.#scale
-    });
-
-    this.#gameRunningView = new GameRunningView({
-      windowManager: this.#windowManager,
-      players: this.#players,
+    this.#views = viewRegistry.createViews({
       background: this.#background,
-    });
-
-    this.#gamePausedView = new GamePausedView({
-      windowManager: this.#windowManager
+      players: this.#players,
+      scale: this.#scale
     })
 
     this.#gameState = "menu";
     this.#inputManager.subscribe(this);
     this.#windowManager.subscribe(this.#updateFromWindowManager);
-
-
+    
   }
 
   /**
@@ -241,7 +222,7 @@ class Game {
    * @function #running
    */
   #gameRunning(){
-    this.#gameRunningView.draw();
+    this.#views.gameRunningView.draw();
   }
 
 
@@ -249,21 +230,21 @@ class Game {
    * @function #gameOver
    */
   #gameOver(){
-    this.#gameOverView.draw();
+    this.#views.gameOverView.draw();
   }
 
   /**
    * @function #gameMenu
    */
   #gameMenu(){
-    this.#gameMenuView.draw();
+    this.#views.gameMenuView.draw();
   }
 
   /**
    * @function #gamePaused
    */
   #gamePaused(){
-    this.#gamePausedView.draw();
+    this.#views.gamePausedView.draw();
   }
 
   /**
