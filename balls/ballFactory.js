@@ -15,11 +15,11 @@ class BallFactory {
       curve: 10,
     };
 
-    /*
+
     this.#ballTypeDistribution = {
-      extender: 100
-    };
-*/
+      buster:100
+    }
+
     this.#ballClasses = {
       plain: Ball,
       number: NumberBall,
@@ -27,6 +27,7 @@ class BallFactory {
       rainbow: RainbowBall,
       speed: BattSpeedUpBall,
       curve: CurveBall,
+      buster: BusterBall,
     };
 
     this.#buildBallTypeMap();

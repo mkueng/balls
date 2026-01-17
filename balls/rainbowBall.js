@@ -7,7 +7,7 @@ class RainbowBall extends Ball {
       stageProperties,
       playField,
       relativePosXPercentage,
-      weight: 30,
+      weight: 40,
       scale
     });
 
@@ -16,7 +16,11 @@ class RainbowBall extends Ball {
 
   hit(){
     this.isActive = false;
-    return { target: "BATT", type: "RAINBOW", props: null };
+    return {
+      target: "BAT",
+      type: "RAINBOW",
+      props: null
+    };
   }
 
   update() {

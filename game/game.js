@@ -2,25 +2,31 @@
 class Game {
 
   #timer;
-  #score;
-  #playField;
   #numberOfTotalPlayFields;
+  #numberOfTotalPlayers;
   #stageProperties;
   #inputManager;
   #windowManager;
-  #ballManager;
-  #setupScreen;
-  #matchState;
-  #gameOverScreen;
+  #gameState;
   #players = {};
   #playFieldFactory;
   #endZoneFactory;
   #playerFactory;
   #scale;
   #ballController;
+  #gameRunningView;
+  #gameOverView;
+  #gameMenuView;
+  #gamePausedView;
+  #controls;
+  #assetManager;
+  #background;
+  #intervalId;
+  #factoryRegistry;
+  #factories = {};
 
   /**
-   *
+   * @constructor
    * @param stageProperties
    * @param timer
    * @param score
@@ -29,62 +35,34 @@ class Game {
    */
   constructor({
     stageProperties,
-    timer,
-    score,
     inputManager,
-    windowManager
+    windowManager,
+    assetManager,
+    controls,
+    factoryRegistry
   }){
-    this.#stageProperties = stageProperties;  
-    this.#timer = timer;
-    this.#score = score;
+    this.#stageProperties = stageProperties;
     this.#inputManager = inputManager;
     this.#windowManager = windowManager;
+    this.#assetManager = assetManager;
     this.#scale = canvasWidth / 1000;
     this.#numberOfTotalPlayFields = 2;
-
-    this.#playFieldFactory = new PlayFieldFactory({
-      stageProperties: this.#stageProperties,
-      windowManager: this.#windowManager,
-      numberOfTotalPlayFields: this.#numberOfTotalPlayFields
-    })
-
-    this.#endZoneFactory = new EndZoneFactory({
-      stageProperties: this.#stageProperties,
-      windowManager: this.#windowManager,
-      numberOfTotalPlayFields :this.#numberOfTotalPlayFields
-    })
-
-    this.#playerFactory = new PlayerFactory({
-      stageProperties: this.#stageProperties,
-      windowManager: this.#windowManager,
-      playFieldFactory: this.#playFieldFactory,
-      endZoneFactory: this.#endZoneFactory,
-      inputManager: this.#inputManager,
-      scale: this.#scale
-    })
-
+    this.#numberOfTotalPlayers = 2;
     this.#players = {};
-
-    const player1= this.#playerFactory.createPlayer({
-      controls: {
-        left: 65,
-        right: 68
-      }
-    });
-   this.#players[player1.id] = player1;
-
-   const player2 = this.#playerFactory.createPlayer({
-      controls: {
-        left: 37,
-        right: 39
-      }
+    this.#timer = 120;
+    this.#intervalId = null;
+    this.#controls = controls;
+    this.#factoryRegistry = factoryRegistry;
+    this.#factories = this.#factoryRegistry.createFactories({
+      numberOfTotalPlayFields: this.#numberOfTotalPlayFields,
+      scale: this.#scale
     });
 
-    this.#players[player2.id] = player2;
-
-    for (const id in this.#players) {
-      const player = this.#players[id];
+    for (let i = 0; i < this.#numberOfTotalPlayers; i++) {
+      const controls = this.#controls.getControlsForPlayer(i+1);
+      const player = this.#factories.playerFactory.createPlayer({controls, scale: this.#scale});
       player.init();
+      this.#players[player.id] = player;
     }
 
     this.#ballController = new BallController({
@@ -97,23 +75,51 @@ class Game {
 
     this.#ballController.init();
 
-    this.#gameOverScreen = new GameOverScreen();
-    
-    this.#setupScreen = new SetupScreen({
-      windowManager: this.#windowManager
-    });
-    
-    this.#matchState = "menu";
+    this.#background = new Background({
+      image: this.#assetManager.getImage("clouds"),
+      posX: 0,
+      posY: 0,
+      scale: this.#scale
+    })
 
+
+    this.#gameMenuView = new GameMenuView({
+      windowManager: this.#windowManager,
+      scale: this.#scale
+    });
+
+    this.#gameOverView = new GameOverView({
+      windowManager: this.#windowManager,
+      scale: this.#scale
+    });
+
+    this.#gameRunningView = new GameRunningView({
+      windowManager: this.#windowManager,
+      players: this.#players,
+      background: this.#background,
+    });
+
+    this.#gamePausedView = new GamePausedView({
+      windowManager: this.#windowManager
+    })
+
+    this.#gameState = "menu";
     this.#inputManager.subscribe(this);
     this.#windowManager.subscribe(this.#updateFromWindowManager);
 
+
   }
 
+  /**
+   * @function init
+   */
   init(){
     console.log("game init");
   }
 
+  /**
+   * @function #updateFromWindowManager
+   */
   #updateFromWindowManager = ()=> {
     this.#scale = canvasWidth / 1000;
     this.#ballController.scale = this.#scale;
@@ -123,40 +129,26 @@ class Game {
     }
   }
 
-  #drawRunning(){
-    background(100);
-
-    for (const id in this.#players) {
-      const player = this.#players[id];
-      player.playField.draw();
-      player.ballManager.updateBalls();
-      player.ballManager.drawBalls();
-      player.update();
-      player.draw();
-      player.endZone.draw();
-    }
-  }
-  
+  /**
+   *
+   * @param keyCode
+   */
   keyPressedEvent(keyCode) {
     if (key === ' ') {
-      switch (this.#matchState) {
+      switch (this.#gameState) {
         case "menu" : {this.startMatch(); break;}
         case "running" : {this.pauseMatch(); break;}
-        case "paused" : {this.resumeMatch(); break;} 
+        case "paused" : {this.resumeMatch(); break;}
         case "gameOver": {this.resumeGame(); break;}
       }
     }
   }
-  
-  setupMatch(){
-    /*
-    this.#playField.draw();
-    this.#score.draw();
-    this.#timer.draw();
-    this.#setupScreen.draw();
-    */
-  }
-  
+
+  /**
+   *
+   * @param playerId
+   * @param effect
+   */
   applyEffect({
                 playerId,
                 effect
@@ -164,72 +156,131 @@ class Game {
     const player = this.#players[playerId];
 
     switch (effect.target) {
-      case "BAT": {player.bat.applyEffect(effect); break}
+      case "BAT": {
+        player.bat.applyEffect(effect);
+        break;
+      }
+
+      case "PLAYER": {
+        player.applyEffect(effect);
+        break
+      }
     }
   }
-  
-  updateScore(points){
-    this.#score.updateScore(points);
+
+  /**
+   *
+   * @param playerId
+   * @param points
+   */
+  updateScore({playerId, points}){
+    this.#players[playerId].score += points;
+    this.#players[playerId].scoreView.currentScore=this.#players[playerId].score;
   }
-  
+
+  /**
+   * @function resumeGame
+   */
   resumeGame(){
-    this.#matchState = "menu";
+    this.#gameState = "menu";
   }
-  
+
+  /**
+   * @function startMatch
+   */
   startMatch(){
     console.log("startMatch");
-    this.#timer.start();
-    this.#ballController.start();
-    this.#matchState = "running";
-  }
-  
 
+    for (const player in this.#players) {
+      this.#players[player].score = 0;
+      this.#players[player].timer = this.#timer;
+    }
+
+    this.#intervalId = setInterval(() => {
+      if (this.#timer > 0){
+        this.#timer--
+        for (const player in this.#players) {
+          this.#players[player].timer = this.#timer;
+        }
+      } else {
+        clearInterval(this.#intervalId);
+        this.endMatch();
+      }
+
+    }, 1000)
+
+    this.#ballController.start();
+    this.#gameState = "running";
+  }
+
+  /**
+   * @function pauseMatch
+   */
   pauseMatch(){
     console.log("pause match");
-    this.#matchState = "paused"
+    this.#gameState = "paused"
   }
-  
+
+  /**
+   * @function resumeMatch
+   */
   resumeMatch(){
     console.log("match resumed");
-    this.#matchState = "running";
+    this.#gameState = "running";
   }
-  
+
+  /**
+   * @function endMatch
+   */
   endMatch(){
     console.log("match ended");
-    this.#matchState = "gameOver";
-    this.#ballManager.stopCreatingBalls();
-  }    
-  
-  update(){
+    this.#gameState = "gameOver";
   }
-  
-  #drawGameOver(){
-    this.#playField.draw();
-    this.#timer.draw();
-    this.#score.draw();
-    this.#gameOverScreen.draw();
-  }
-  
-  #drawMenu(){
-    //this.#playField.draw();
-    this.#setupScreen.draw();
 
-  }
-  
-  #drawPaused(){
-    
+  /**
+   * @function #running
+   */
+  #gameRunning(){
+    this.#gameRunningView.draw();
   }
 
 
+  /**
+   * @function #gameOver
+   */
+  #gameOver(){
+    this.#gameOverView.draw();
+  }
 
-  #drawStates = {
-    running: () => this.#drawRunning(),
-    paused: () => this.#drawPaused(),
-    menu: () => this.#drawMenu(),
-    gameOver: () => this.#drawGameOver()
+  /**
+   * @function #gameMenu
+   */
+  #gameMenu(){
+    this.#gameMenuView.draw();
+  }
+
+  /**
+   * @function #gamePaused
+   */
+  #gamePaused(){
+    this.#gamePausedView.draw();
+  }
+
+  /**
+   *
+   * @type {{running: function(): void, paused: function(): void, menu: function(): void, gameOver: function(): void}}
+   */
+  #gameStates = {
+    running: () => this.#gameRunning(),
+    paused: () => this.#gamePaused(),
+    menu: () => this.#gameMenu(),
+    gameOver: () => this.#gameOver()
   };
-   
+
+  /**
+   * @function draw
+   */
   draw(){
-    this.#drawStates[this.#matchState]?.();
+    this.#gameStates[this.#gameState]?.();
   }
 }

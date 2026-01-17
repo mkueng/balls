@@ -8,7 +8,6 @@ class Bat {
   #inputManager;
   #moveLeft;
   #moveRight;
-  #playFieldWidth;
   #states;
   #currentState;
   #stateInTransition;
@@ -30,7 +29,6 @@ class Bat {
               }) {
 
     this.#posY = canvasHeight - canvasHeight / 15;
-    this.#playFieldWidth = canvasWidth / 2;
     this.#inputManager = inputManager;
     this.#moveLeft = false;
     this.#moveRight = false;
@@ -62,7 +60,7 @@ class Bat {
           }
         },
         draw: () => {
-          fill(100, 100, 100);
+          fill(64, 64, 64);
           noStroke();
           rect(this.#posX, this.#posY, this.#width, this.#height);
           arc(
@@ -88,7 +86,7 @@ class Bat {
               this.#stateInTransition = true;
               this.#stateTransition = this.#states.normal.transition;
               this.#isInSpecialState = false;
-            }, 7000)
+            }, 10000)
 
           }
         },
@@ -109,15 +107,19 @@ class Bat {
       },
 
       rainbow: {
+        props: {
+          colorPhase: random(1000)
+        },
+
         transition: () => {
-          if (this.#width < this.#playFieldWidth) {
+          if (this.#width < this.#playFieldBounds.width) {
             this.#width += 6;
           }
-          if (this.#posX > 0) {
+          if (this.#posX > this.#playFieldBounds.startX) {
             this.#posX -= 2;
           }
 
-          if (this.#width >= this.#playFieldWidth && this.#posX <= 0) {
+          if (this.#width >= this.#playFieldBounds.width && this.#posX <= this.#playFieldBounds.startX) {
             this.#stateInTransition = false;
             this.#currentState = this.#states.rainbow;
             setTimeout(() => {
@@ -128,9 +130,22 @@ class Bat {
           }
         },
         draw: () => {
-          fill(Math.floor(random(255)), Math.floor(random(255)), Math.floor(random(255)));
+          this.#states.rainbow.props.colorPhase += 0.1;
+          const r = 128 + 127 * sin(this.#states.rainbow.props.colorPhase);
+          const g = 128 + 127 * sin(this.#states.rainbow.props.colorPhase + TWO_PI/3);
+          const b = 128 + 127 * sin(this.#states.rainbow.props.colorPhase + 2*TWO_PI/3);
+
           noStroke();
+          fill(r, g, b);
           rect(this.#posX, this.#posY, this.#width, this.#height);
+          arc(
+            this.#posX + this.#width / 2,// center x
+            this.#posY,                  // top of rectangle
+            this.#width,                 // arc width
+            this.#width * 0.2,           // arc height (circle)
+            PI,                          // start angle
+            TWO_PI                       // end angle
+          );
 
         }
 

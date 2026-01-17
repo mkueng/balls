@@ -5,9 +5,12 @@ let game;
 let gameFont;
 let canvasHeight;
 let canvasWidth;
+let assetManager = new AssetManager();
 
 function preload() {
   gameFont = loadFont('/assets/fonts/Barriecito-Regular.ttf');
+  assetManager.loadImage('clouds');
+
 }
 
 function setup() {
@@ -15,12 +18,12 @@ function setup() {
   windowManager = new WindowManager();
   inputManager = new InputManager();
   gameManager = new GameManager({
+    assetManager,
     inputManager,
     windowManager
   });
   gameManager.init();
-  gameManager.setupGame();
-  game = gameManager.getGame();
+  game = gameManager.initGame();
 }
 
 function draw() {

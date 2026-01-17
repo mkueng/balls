@@ -85,6 +85,18 @@ class Ball{
   set velY(vel){this.#velY = vel};
   set scorePoints(points){this.#scorePoints = points};
 
+  get posX() { return this.#posX; }
+  set posX(x) { this.#posX = x; }
+
+  get posY() { return this.#posY; }
+  set posY(y) { this.#posY = y; }
+
+  get scale() { return this.#scale; }
+  get scaleWeight() { return this.#scaleWeight; }
+
+  get isActive() { return this.#isActive; }
+  get direction() { return this.#direction; }
+
   set scale(scale){
     this.#scale = scale
     this.#scaleWeight = this.#weight * this.#scale;
@@ -103,11 +115,11 @@ class Ball{
    * Update the ball position
    * @param scale
    */
-  update() {
+  update(base) {
     if (this.#isActive) {
 
       // gravity in "pixels per frame²" at scale = 1
-      const baseG = 0.25;            // tune this
+      const baseG =  base ?? 0.25;            // tune this
       const g = baseG * this.#scale; // <-- makes fall feel consistent when playfield scales
 
       if (this.#direction === true) {

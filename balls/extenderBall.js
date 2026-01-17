@@ -19,12 +19,12 @@ class ExtenderBall extends Ball {
   
    hit(){
      this.isActive=false;
-    return {
-      target: "BAT",
-      type: "EXTEND",
-      props: null  
-    };
-  }
+      return {
+        target: "BAT",
+        type: "EXTEND",
+        props: null
+      };
+    }
   
   update() {
     super.update();

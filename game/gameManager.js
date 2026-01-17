@@ -4,61 +4,61 @@ class GameManager {
   #game;
   #stageProperties;
   #stageNumber;
-  #timer;
-  #score;
   #inputManager;
   #windowManager;
-  #ballManager;
+  #assetManager;
+  #controls;
+  #factoryRegistry;
 
-  
   constructor({
+    assetManager,
     inputManager,
     windowManager
   }){
-
     this.#inputManager = inputManager;
     this.#windowManager = windowManager;
-  }
-  
-  timerUpdate(time){
-    if (time === 0) {
-      this.endGame();
-    }
+    this.#assetManager = assetManager;
   }
 
+  /**
+   *
+   */
   init(){
     this.#stageNumber = 1;
     this.#stageManager = new StageManager();
-    this.#stageProperties =  this.#stageManager.getStageProperties({stage:"stage"+this.#stageNumber});
-    this.#timer = new Timer({stageProperties: this.#stageProperties});
-    this.#score = new Score({
-      stageProperties: this.#stageProperties,
-      windowManager: this.#windowManager
+    this.#controls = new Controls();
+    this.#factoryRegistry = new FactoryRegistry({
+      stageProperties: this.#stageManager.getStageProperties({stage:"stage"+this.#stageNumber}),
+      windowManager: this.#windowManager,
+      inputManager: this.#inputManager
     });
-    this.#timer.subscribe(this);
+    this.#stageProperties =  this.#stageManager.getStageProperties({stage:"stage"+this.#stageNumber});
   }
 
-  setupGame(){
+  /**
+   *
+   * @returns {*}
+   */
+  initGame(){
 
     this.#game = new Game({
+      assetManager: this.#assetManager,
       windowManager: this.#windowManager,
       inputManager: this.#inputManager,
       stageProperties: this.#stageProperties,
-      timer: this.#timer,
-      score: this.#score
+      controls: this.#controls,
+      factoryRegistry: this.#factoryRegistry
     })
+
+    return this.#game;
   }
-  
+
+  /**
+   * @function getGame
+   * @returns {*}
+   */
   getGame(){
     return this.#game;
   }
-  
-  setupMatch(){
-    this.#game.setupMatch();
-  }
-  
-  pauseGame(){};
-  endGame(){
-    this.#game.endMatch();
-  };
+
 }

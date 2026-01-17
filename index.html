@@ -1,70 +1,98 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- PLEASE NO CHANGES BELOW THIS LINE (UNTIL I SAY SO) -->
-  <script language="javascript" type="text/javascript" src="libraries/p5.min.js"></script>
-  <script language="javascript" type="text/javascript" src="balls/ball.js"></script>
-  <script language="javascript" type="text/javascript" src="balls/ballController.js"></script>
-  <script language="javascript" type="text/javascript" src="balls/ballFactory.js"></script>
-  <script language="javascript" type="text/javascript" src="balls/ballManager.js"></script>
+    <script language="javascript" type="text/javascript" src="libraries/p5.min.js"></script>
 
-  <script language="javascript" type="text/javascript" src="bats/bat.js"></script>
+    <!-- ASSETS -->
+    <script language="javascript" type="text/javascript" src="assets/assetManager.js"></script>
 
-  <script language="javascript" type="text/javascript" src="balls/battSpeedUpBall.js"></script>
-  <script language="javascript" type="text/javascript" src="balls/curveBall.js"></script>
-  <script language="javascript" type="text/javascript" src="endZone/endZone.js"></script>
-  <script language="javascript" type="text/javascript" src="endZone/endZoneFactory.js"></script>
-  <script language="javascript" type="text/javascript" src="balls/extenderBall.js"></script>
-  <script language="javascript" type="text/javascript" src="game/game.js"></script>
-  <script language="javascript" type="text/javascript" src="game/gameManager.js"></script>
-  <script language="javascript" type="text/javascript" src="game/gameOverScreen.js"></script>
-  <script language="javascript" type="text/javascript" src="input/inputManager.js"></script>
-  <script language="javascript" type="text/javascript" src="balls/numberBall.js"></script>
-  <script language="javascript" type="text/javascript" src="playField/playField.js"></script>
-  <script language="javascript" type="text/javascript" src="playField/playFieldFactory.js"></script>
-  <script language="javascript" type="text/javascript" src="players/playerFactory.js"></script>
-  <script language="javascript" type="text/javascript" src="players/player.js"></script>
-  <script language="javascript" type="text/javascript" src="balls/rainbowBall.js"></script>
-  <script language="javascript" type="text/javascript" src="game/score.js"></script>
-  <script language="javascript" type="text/javascript" src="game/stageManager.js"></script>
-  <script language="javascript" type="text/javascript" src="game/setupScreen.js"></script>
-  <script language="javascript" type="text/javascript" src="game/timer.js"></script>
-  <script language="javascript" type="text/javascript" src="Balls.js"></script>
-  <script language="javascript" type="text/javascript" src="windowManager.js"></script>
-  <!-- OK, YOU CAN MAKE CHANGES BELOW THIS LINE AGAIN -->
+    <!-- BALL -->
+    <script language="javascript" type="text/javascript" src="balls/ball.js"></script>
+    <script language="javascript" type="text/javascript" src="balls/ballController.js"></script>
+    <script language="javascript" type="text/javascript" src="balls/ballFactory.js"></script>
+    <script language="javascript" type="text/javascript" src="balls/ballManager.js"></script>
+    <script language="javascript" type="text/javascript" src="balls/battSpeedUpBall.js"></script>
+    <script language="javascript" type="text/javascript" src="balls/curveBall.js"></script>
+    <script language="javascript" type="text/javascript" src="balls/extenderBall.js"></script>
+    <script language="javascript" type="text/javascript" src="balls/numberBall.js"></script>
+    <script language="javascript" type="text/javascript" src="balls/rainbowBall.js"></script>
+    <script language="javascript" type="text/javascript" src="balls/busterBall.js"></script>
 
-  <style>
-      html, body {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-    }
+    <!-- BAT -->
+    <script language="javascript" type="text/javascript" src="bats/bat.js"></script>
 
-    body {
-      display: flex;
-      justify-content: center;  /* left ↔ right */
-      align-items: center;      /* top ↕ bottom */
-      overflow: hidden;
-      background: #000;         /* optional */
-    }
-  </style>
-</head>
+    <!-- EndZone -->
+    <script language="javascript" type="text/javascript" src="endZone/endZone.js"></script>
+    <script language="javascript" type="text/javascript" src="endZone/endZoneFactory.js"></script>
 
-<body>
-  <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+    <!-- Game -->
+    <script language="javascript" type="text/javascript" src="game/game.js"></script>
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    <script language="javascript" type="text/javascript" src="game/gameManager.js"></script>
+    <script language="javascript" type="text/javascript" src="game/stageManager.js"></script>
+    <script language="javascript" type="text/javascript" src="game/views/view.js"></script>
+    <script language="javascript" type="text/javascript" src="game/views/gameMenuView.js"></script>
+    <script language="javascript" type="text/javascript" src="game/views/gameOverView.js"></script>
+    <script language="javascript" type="text/javascript" src="game/views/gamePausedView.js"></script>
+    <script language="javascript" type="text/javascript" src="game/views/gameRunningView.js"></script>
+    <script language="javascript" type="text/javascript" src="timer/timerView.js"></script>
 
-  //const analytics = getAnalytics(app);
-</script>
-</body>
+    <!-- INPUT -->
+    <script language="javascript" type="text/javascript" src="input/inputManager.js"></script>
+
+    <!-- PLAYFIELD -->
+    <script language="javascript" type="text/javascript" src="playField/playField.js"></script>
+    <script language="javascript" type="text/javascript" src="playField/playFieldFactory.js"></script>
+
+    <!-- PLAYERS -->
+    <script language="javascript" type="text/javascript" src="players/playerFactory.js"></script>
+    <script language="javascript" type="text/javascript" src="players/player.js"></script>
+    <script language="javascript" type="text/javascript" src="players/controls.js"></script>
+
+    <!-- SCORE -->
+    <script language="javascript" type="text/javascript" src="score/scoreView.js"></script>
+
+    <!-- BACKGROUNDS -->
+    <script language="javascript" type="text/javascript" src="backgrounds/background.js"></script>
+
+    <!-- APP -->
+    <script language="javascript" type="text/javascript" src="game/factoryRegistry.js"></script>
+    <script language="javascript" type="text/javascript" src="windowManager.js"></script>
+    <script language="javascript" type="text/javascript" src="Balls.js"></script>
+
+
+    <style>
+        html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;  /* left ↔ right */
+        align-items: center;      /* top ↕ bottom */
+        overflow: hidden;
+        background: #000;         /* optional */
+      }
+    </style>
+  </head>
+
+  <body>
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+
+      // Your web app's Firebase configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+
+      //const analytics = getAnalytics(app);
+    </script>
+  </body>
 </html>

@@ -1,17 +1,31 @@
-class SetupScreen {
-  
+'use strict';
+
+/**
+ * @class GameMenuView
+ */
+class GameMenuView extends View{
+
   #selectedOptions;
   #options;
-  #backgroundcolor;
-  #windowManager;
-     
+  #backgroundColor;
+
+  /**
+   * @constructor
+   * @param windowManager
+   */
   constructor(
     {
+      playFieldBounds,
+      scale,
       windowManager
     }){
-    this.#windowManager = windowManager;
-    this.#windowManager.subscribe(this.updateFromWindowManager);
-    this.#backgroundcolor = [210,238,245];
+    super({
+      playFieldBounds,
+      scale,
+      windowManager
+    });
+    this.windowManager.subscribe(this.updateFromWindowManager);
+    this.#backgroundColor = [210,238,245];
 
     this.#selectedOptions = {
       "1player": true,
@@ -25,6 +39,9 @@ class SetupScreen {
     this.#initOptions();
   }
 
+  /**
+   * @function #initOptions
+   */
   #initOptions(){
     this.#options = {
       player1: {
@@ -60,12 +77,18 @@ class SetupScreen {
     }
   }
 
+  /**
+   * @function updateFromWindowManager
+   */
   updateFromWindowManager = ()=>{
     this.#initOptions();
   };
 
+  /**
+   * @function draw
+   */
   draw(){
-    background(this.#backgroundcolor[0], this.#backgroundcolor[1], this.#backgroundcolor[2]);
+    background(this.#backgroundColor[0], this.#backgroundColor[1], this.#backgroundColor[2]);
     textAlign(CENTER);
     noStroke();
     textSize(canvasHeight / 8);

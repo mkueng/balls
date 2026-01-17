@@ -30,7 +30,7 @@ class NumberBall extends Ball {
     translate(this.posX, this.posY);
 
     // subtle rotation (optional)
-    rotate(radians(this.posX * 0.2));
+    rotate(radians(this.posX * 1.5));
 
     textAlign(CENTER, CENTER);
     textFont('Impact');

@@ -59,7 +59,6 @@ class BallController {
         onScore:(e) => this.handleScoreUpdate(e)
       })
     }
-
   }
 
   /**
@@ -76,6 +75,7 @@ class BallController {
     });
   }
 
+
   /**
    *
    * @param playerId
@@ -83,12 +83,12 @@ class BallController {
    */
   handleScoreUpdate({playerId, points}){
     // @TODO: Update score in game score manager
-    /*
-    this.#game.score.updateScore({
+
+    this.#game.updateScore({
       playerId: playerId,
       points: points
     })
-*/
+
   }
 
   /**

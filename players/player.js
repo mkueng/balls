@@ -1,89 +1,126 @@
+'use strict';
+
+/**
+ * @class Player
+ */
 class Player {
 
   #id;
   #name;
-  #personalHighScore;
   #avatar;
   #currentScore;
   #stageProperties;
-  #inputManager;
   #playField;
   #bat;
-  #playerNumber;
   #windowManager;
   #ballManager;
-  #playFieldFactory;
-  #endZoneFactory;
-  #controls;
   #subscribers;
-  #scaleFactor;
   #endZone;
   #scale;
+  #score;
+  #personalHighScore;
+  #scoreView;
+  #timerView;
+  #timer;
 
+  /**
+   * @constructor
+   * @param stageProperties
+   * @param inputManager
+   * @param name
+   * @param id
+   * @param personalHighScore
+   * @param avatar
+   * @param playerNumber
+   * @param windowManager
+   * @param playFieldFactory
+   * @param endZoneFactory
+   * @param controls
+   * @param scale
+   * @param scoreView
+   */
   constructor({
-                stageProperties,
-                inputManager,
-                name,
                 id,
+                name,
+                stageProperties,
                 personalHighScore,
                 avatar,
-                playerNumber,
                 windowManager,
-                playFieldFactory,
-                endZoneFactory,
-                controls,
-                scale
+                playField,
+                bat,
+                endZone,
+                scale,
   }){
     this.#stageProperties = stageProperties;
-    this.#inputManager = inputManager;
     this.#windowManager = windowManager;
-    this.#playFieldFactory = playFieldFactory;
-    this.#endZoneFactory = endZoneFactory;
+
     this.#name = name ?? "player";
     this.#id = id;
     this.#personalHighScore = personalHighScore ?? "0";
     this.#avatar = avatar ?? null;
     this.#currentScore = 0;
-    this.#playerNumber = playerNumber;
-    this.#controls = controls ?? [];
+    this.#playField = playField;
+    this.#bat = bat;
+    this.#endZone = endZone;
     this.#subscribers = [];
     this.#scale = scale;
-
-
+    this.#personalHighScore = personalHighScore ?? "0";
+    this.#score = 0;
+    this.#timer = null;
   }
 
   set ballManager(ballManager){
     this.#ballManager = ballManager;
   }
-
+  get score(){
+    return this.#score;
+  }
+  get scoreView(){
+    return this.#scoreView;
+  }
   get name(){
     return this.#name;
   }
-
   get id(){
     return this.#id;
   }
-
   get ballManager(){
     return this.#ballManager;
   }
-
   get bat(){
     return this.#bat;
   }
-
   get playField(){
     return this.#playField;
   }
-
-  get endZone(){
-    return this.#endZone;
+  get name() {
+    return this.#name;
+  }
+  get currentScore() {
+    return this.#currentScore;
+  }
+  set score(score){
+    this.#score = score;
+  }
+  set timer(timer){
+    this.#timer = timer;
   }
 
+  get timer(){
+    return this.#timer;
+  }
+
+  /**
+   * @function subscribe
+   * @param callback
+   */
   subscribe({callback}){
     this.#subscribers.push(callback);
   }
 
+  /**
+   * @function #updateFromWindowManager
+   */
   #updateFromWindowManager = ()=>{
     this.#scale = canvasWidth / 1000;
     const playFieldBounds =  this.#playField.setBoundaries();
@@ -92,47 +129,42 @@ class Player {
     this.#endZone.setBounds({playFieldBounds});
   }
 
+  /**
+   * @function init
+   */
   init() {
 
     this.#windowManager.subscribe(this.#updateFromWindowManager);
 
-    this.#playField = this.#playFieldFactory.createPlayField({});
-    this.#playField.init();
-    const playFieldBounds =  this.#playField.setBoundaries();
-
-    this.#endZone = this.#endZoneFactory.createEndZone({
-      fieldNumber: this.#playField.fieldNumber,
-      playFieldBounds: playFieldBounds
-    });
-
-    this.#endZone.init();
-
-    this.#bat = new Bat({
-      playFieldBounds: playFieldBounds,
-      stageProperties: this.#stageProperties,
-      inputManager: this.#inputManager,
-      controls: this.#controls,
+    this.#timerView = new TimerView({
+      playFieldBounds: this.#playField.bounds,
       scale: this.#scale,
-      speed: 8,
-      width: playFieldBounds.width / 4,
-      height: playFieldBounds.height / 70,
-    });
+      getTimer: () => this.#timer
+    })
 
-
+    this.#scoreView = new ScoreView({
+      playFieldBounds: this.#playField.bounds,
+      scale: this.#scale
+    })
   }
 
+  /**
+   * @function update
+   */
   update(){
-
-  }
-
-  draw(){
-    //this.#playField.draw();
     this.#bat.update();
-    this.#bat.draw();
+    this.#ballManager.updateBalls();
   }
-  
-  get name() {return this.#name;}
-  get personalHighScore() {return this.#personalHighScore;}
-  get currentScore() {return this.#currentScore;}
-  
+
+  /**
+   * @function draw
+   */
+  draw(){
+    this.#playField.draw();
+    this.#ballManager.drawBalls();
+    this.#bat.draw();
+    this.#endZone.draw();
+    this.#scoreView.draw();
+    this.#timerView.draw();
+  }
 }

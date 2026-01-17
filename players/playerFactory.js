@@ -1,4 +1,8 @@
 'use strict'
+
+/**
+ * @class PlayerFactory
+ */
 class PlayerFactory {
 
   #stageProperties;
@@ -39,6 +43,51 @@ class PlayerFactory {
     this.#scale = scale;
   }
 
+  /**
+   * @function createPlayField
+   * @returns {*|PlayField}
+   */
+  createPlayField(){
+    const playField = this.#playFieldFactory.createPlayField({});
+    playField.init();
+    return playField;
+  }
+
+  /**
+   * @function createBat
+   * @param controls
+   * @param playFieldBounds
+   * @param speed
+   * @returns {Bat}
+   */
+  createBat(controls, playFieldBounds, speed){
+    const bat = new Bat({
+      playFieldBounds: playFieldBounds,
+      stageProperties: this.#stageProperties,
+      inputManager: this.#inputManager,
+      controls: controls,
+      scale: this.#scale,
+      speed: speed,
+      width: playFieldBounds.width / 4,
+      height: playFieldBounds.height / 70,
+    })
+    return bat;
+  }
+
+  /**
+   * @function createEndZone
+   * @param fieldNumber
+   * @param playFieldBounds
+   * @returns {*|EndZone}
+   */
+  createEndZone(fieldNumber, playFieldBounds){
+    const endZone = this.#endZoneFactory.createEndZone({
+      fieldNumber: fieldNumber,
+      playFieldBounds: playFieldBounds
+    });
+    endZone.init();
+    return endZone;
+  }
 
   /**
    *
@@ -49,20 +98,25 @@ class PlayerFactory {
    */
   createPlayer({
                  controls,
-                 speedFactor,
-                 scale
+                 scale,
+                 name
   }){
     this.#playerNumber++;
+
+    const playField = this.createPlayField();
+    const playFieldBounds =  playField.setBoundaries();
+    const endZone = this.createEndZone(playField.fieldNumber, playFieldBounds);
+    const bat = this.createBat(controls, playFieldBounds, 8);
+
     return new Player({
-      controls: controls,
       id: crypto.randomUUID(),
+      name: name,
       stageProperties: this.#stageProperties,
-      inputManager: this.#inputManager,
       windowManager: this.#windowManager,
-      playFieldFactory: this.#playFieldFactory,
-      endZoneFactory: this.#endZoneFactory,
-      scale: this.#scale
+      playField: playField,
+      bat: bat,
+      endZone: endZone,
+      scale: scale
     })
   }
-
 }

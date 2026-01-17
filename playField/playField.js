@@ -54,7 +54,7 @@ class PlayField {
       + this.#strokeWeight / 2;
 
     this.#bounds = {
-      width: halfCanvas - this.#strokeWeight,
+      width: halfCanvas - this.#strokeWeight /2,
       height: canvasHeight - this.#strokeWeight,
       startX: offset,
       startY: this.#strokeWeight,
@@ -73,7 +73,10 @@ class PlayField {
       width,
       height
     } = this.#bounds;
-    fill(210,238,245);
+    //fill(210,238,245);
+    stroke(100,100,100);
+    strokeWeight(this.#strokeWeight);
+    noFill();
     rect(startX, startY, width, height);
   }
 }
